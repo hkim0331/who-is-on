@@ -37,6 +37,19 @@ hiroshi . kimura . 0331 @ gmail . com
             (for ([u (query-rows sql3 "select name from users")])
               (display (format "<li>~a</li>" (vector-ref u 0)))))))))
 
+(define (hh:mm s)
+  (let ((ret (string-split s ":")))
+    (format "~a:~a" (first ret) (second ret))))
+
+(define (pp today ontimes)
+  (with-output-to-string
+    (lambda ()
+      (display (format "<p><b>~a</b> " today))
+      (display (string-join 
+                (map (lambda (dt) (hh:mm (second (string-split dt))))
+                  ontimes)
+                " -> "))
+      (display "</p>"))))
 
 (get "/user/:name"
      (lambda (req)
@@ -45,15 +58,16 @@ hiroshi . kimura . 0331 @ gmail . com
               (today (query-value sql3 "select date('now','localtime')"))
               (ontime (query-list
                        sql3
-                       "select ts from ons
-                       where wifi=$1 and ts between $2 and $3"
+                       "select timestamp from mac_addrs where mac=$1 and timestamp between $2 and $3"
                        wifi
                        (string-append today " 00:00:00")
                        (string-append today " 23:59:59"))))
          (html
           (with-output-to-string
             (lambda ()
-              (display (format "<h3>~a, ~a</h3>" (params req 'name) today))
-              (display ontime)))))))
+              (display (format "<h3>~a</h3>" (params req 'name)))
+              (display (pp today ontime))))))))
+
+(displayln "start at 8000/tcp")
 
 (run #:listen-ip #f #:port 8000)
