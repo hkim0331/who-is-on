@@ -52,7 +52,7 @@
     (thunk
       (let loop ()
         (who-is-on)
-        (sleep 60)
+        (sleep 3600)
         (loop)))))
 
 ;; (fetch "hkimura" "2019-01-01" "2019-04-01")
