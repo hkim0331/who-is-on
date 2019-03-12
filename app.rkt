@@ -50,7 +50,7 @@ hiroshi . kimura . 0331 @ gmail . com
   (lambda (req)
     (let* ((name (params req 'name))
            (date (params req 'date))
-           (ret (query-list sql3 "select date,time from mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 and date=$2"
+           (ret (query-list sql3 "select time from mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 and date=$2"
       name date)))
       (html
         (format "<h3>~a, ~a</h3>" name date)
