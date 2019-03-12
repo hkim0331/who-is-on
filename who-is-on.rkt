@@ -52,24 +52,24 @@
     (thunk
       (let loop ()
         (who-is-on)
-        (sleep 3600)
+        (sleep 60);; 3600
         (loop)))))
 
-;; (fetch "hkimura" "2019-01-01" "2019-04-01")
-(define (fetch who from to)
+;; (fetch "hkimura" "2019-01-01")
+(define (fetch who date)
   (let* ((sql3
           (sqlite3-connect #:database "who-is-on.sqlite3"))
          (wifi
           (query-value
            sql3
            "select wifi from users where name=$1" who))
-         (ts
+         (times
           (query-rows
            sql3
-           "select timestamp from mac_addrs where mac=$1 and timestamp between $2 and $3"
-           wifi from to)))
+           "select time from mac_addrs where mac=$1 and date=$2"
+           wifi date)))
     (disconnect sql3)
-    ts))
+    times))
 
 (define (names)
   (let ((sql3 (sqlite3-connect #:database "who-is-on.sqlite3")))

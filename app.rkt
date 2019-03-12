@@ -33,55 +33,50 @@ hiroshi . kimura . 0331 @ gmail . com
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
 
 (get "/users"
-     (lambda (req)
-       (html
-        (with-output-to-string
-          (lambda ()
-            (for ([u (query-rows sql3 "select name from users")])
-              (display (format "<li>~a</li>" (vector-ref u 0)))))))))
+  (lambda (req)
+    (html
+      (string-join
+        (map (lambda (s) (format "<li>~a</li>" s))
+          (query-list sql3 "select name from users"))))))
+
+(define (wifi name)
+  (query-value sql3 "select wifi from users where name=$1" name))
 
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
     (format "~a:~a" (first ret) (second ret))))
 
-(define (pp date ontimes)
-  (with-output-to-string
-    (lambda ()
-      (display (format "<p><b>~a</b> " date))
-      (display (string-join 
-                (map (lambda (dt) (hh:mm (second (string-split dt))))
-                  ontimes)
-                " -> "))
-      (display "</p>"))))
-
-;; can not find 'redirect'. so ...
-(define (name-date name date)
-  (let* ((wifi (query-value 
-                  sql3 "select wifi from users where name=$1" name))
-         (ontimes (query-list
-                    sql3
-                    "select timestamp from mac_addrs where mac=$1 and timestamp between $2 and $3"
-                    wifi
-                    (string-append date " 00:00:00")
-                    (string-append date " 23:59:59"))))
-    (pp date ontimes)))
-
 (get "/user/:name/:date"
   (lambda (req)
-    (let ((name (params req 'name))
-          (date (params req 'date)))
+    (let* ((name (params req 'name))
+           (date (params req 'date))
+           (ret (query-list sql3 "select date,time from mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 and date=$2"
+      name date)))
       (html
-        (format "<h3>~a</h3>" name)
-        (name-date name date)))))
+        (format "<h3>~a, ~a</h3>" name date)
+        "<p>"
+        (string-join (map hh:mm ret) " -> ")
+        "</p>"))))
 
-;; 「今日の」じゃなく、「彼の」にするか。
 (get "/user/:name"
   (lambda (req)
-    (let ((name (params req 'name))
-          (date (query-value sql3 "select date('now','localtime')")))
+    (define date first)
+    (define (first-date x) (date (first x)))
+    (let ((name (params req 'name)))
       (html
-        (format "<h3>Today's ~a</h3>" name)
-        (name-date name date)))))
+        (format "<h3>~a</h3>" name)
+        (with-output-to-string
+          (lambda ()
+            (let loop ((ret (map vector->list (query-rows sql3 "select date,time from  mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 order by date desc, time" name))))
+              (unless (null? ret)
+                (display (format "<p><b>~a</b> " (first-date ret)))
+                (display 
+                  (string-join 
+                    (map (lambda (x) (hh:mm (second x)))
+                      (filter (lambda (s) (string=? (date s) (first-date ret))) ret))
+                     " -> "))
+                (display "</p>")
+                (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
 (displayln "start at 8000/tcp")
 
