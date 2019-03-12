@@ -41,33 +41,46 @@ hiroshi . kimura . 0331 @ gmail . com
   (let ((ret (string-split s ":")))
     (format "~a:~a" (first ret) (second ret))))
 
-(define (pp today ontimes)
+(define (pp date ontimes)
   (with-output-to-string
     (lambda ()
-      (display (format "<p><b>~a</b> " today))
+      (display (format "<p><b>~a</b> " date))
       (display (string-join 
                 (map (lambda (dt) (hh:mm (second (string-split dt))))
                   ontimes)
                 " -> "))
       (display "</p>"))))
 
+;; can not find 'redirect'. so ...
+(define (name-date name date)
+  (let* ((wifi (query-value 
+                  sql3 "select wifi from users where name=$1" name))
+         (ontimes (query-list
+                    sql3
+                    "select timestamp from mac_addrs where mac=$1 and timestamp between $2 and $3"
+                    wifi
+                    (string-append date " 00:00:00")
+                    (string-append date " 23:59:59"))))
+        (with-output-to-string
+          (lambda ()
+            (display (format "<h3>~a</h3>" name))
+            (display (pp date ontimes))))))
+
+(get "/user/:name/:date"
+  (lambda (req)
+    (html
+      (name-date (params req 'name) 
+                 (params req 'date)))))
+
 (get "/user/:name"
-     (lambda (req)
-       (let* ((wifi (query-value sql3 "select wifi from users where name=$1"
-                                (params req 'name)))
-              (today (query-value sql3 "select date('now','localtime')"))
-              (ontime (query-list
-                       sql3
-                       "select timestamp from mac_addrs where mac=$1 and timestamp between $2 and $3"
-                       wifi
-                       (string-append today " 00:00:00")
-                       (string-append today " 23:59:59"))))
-         (html
-          (with-output-to-string
-            (lambda ()
-              (display (format "<h3>~a</h3>" (params req 'name)))
-              (display (pp today ontime))))))))
+  (lambda (req)
+    (html
+      (name-date (params req 'name)
+                 (query-value sql3 "select date('now','localtime')")))))
 
 (displayln "start at 8000/tcp")
 
 (run #:listen-ip #f #:port 8000)
+
+
+
