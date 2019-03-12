@@ -3,11 +3,15 @@
 定期的に who-is-on を呼ぶこと。
 who-is-on は見つかった MAC アドレスをテーブル on に記録する。
 
+## who-is-on.rkt
+
 fetch who from to はデータを取り出す。
 
-list users
-todays today's users records
-on/user 
+## app.rkt
+
+* get /users
+* get /user/:name
+* get /user/:name/:date
 
 
 ---
