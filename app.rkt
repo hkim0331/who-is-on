@@ -1,4 +1,7 @@
 #!/usr/bin/env racket
+;;; WiFi で出場状況チェック
+;;; by hkimura, 
+;;; update 2019-03-13,
 #lang racket
 
 (require db (planet dmac/spin))
@@ -81,6 +84,3 @@ hiroshi . kimura . 0331 @ gmail . com
 (displayln "start at 8000/tcp")
 
 (run #:listen-ip #f #:port 8000)
-
-
-
