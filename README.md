@@ -5,7 +5,8 @@ who-is-on は見つかった MAC アドレスをテーブル on に記録する�
 
 ## who-is-on.rkt
 
-fetch who from to はデータを取り出す。
+/bin/ping のブロードキャストに反応しないホストもある。
+ruby で書いた sweep を racket で書き直すか？
 
 ## app.rkt
 
