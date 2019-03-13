@@ -29,7 +29,7 @@
     (map thread-wait
          (for/list ([i (range from to)])
            (let ((cmdline (format "~a ~a ~a.~a" cmd arg net i)))
-             (thread (lambda () (exec* cmdline))))))
+             (thread (thunk (exec* cmdline))))))
     #t))
 
 (define (broadcast)
