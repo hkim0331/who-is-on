@@ -1,0 +1,7 @@
+2019-03-13  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* version 0.4: mac ではなく、user.id を記録するようにするか。
+	有効な user.id だけを記録する方がいいか。
+	user.name でも。DB容量的には id だが。
+	pings? も復活させる。
+
