@@ -7,8 +7,9 @@
 
 ;; need adjust
 (define *subnet* "192.168.0")
-(define *ping* "/bin/ping")
+(define *ping* "/bin/ping")             ; /sbin/ping in macos
 (define *arp* "/usr/sbin/arp")
+(define *db* "./who-is-on.sqlite3")
 
 (define (exec cmdline)
     (let* ((proc (apply process* (string-split cmdline)))
@@ -36,7 +37,7 @@
   (bc *subnet* 1 254))
 
 (define (who-is-on)
-  (let ((sql3 (sqlite3-connect #:database "who-is-on.sqlite3")))
+  (let ((sql3 (sqlite3-connect #:database *db*)))
     (for ([mac (map (lambda (s) (fourth (string-split s))) (arp))])
       (unless (regexp-match #rx"incomplete" mac)
         (query-exec sql3 "insert into mac_addrs (mac) values ($1)" mac)))
