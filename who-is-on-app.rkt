@@ -17,7 +17,8 @@
 </head>
 <body>
 <div class='container'>
-<h2>Who is on?</h2>")
+<h2>Who is on?</h2>
+<p><a href='/users'>back</a></p>")
 
 (define footer
   "<hr>
@@ -38,9 +39,11 @@ hiroshi . kimura . 0331 @ gmail . com
 (get "/users"
   (lambda (req)
     (html
-      (string-join
-        (map (lambda (s) (format "<li>~a</li>" s))
-          (query-list sql3 "select name from users"))))))
+     (with-output-to-string
+       (lambda ()
+         (for ([u (query-list sql3 "select name from users")])
+           (displayln (format "<li><a href='/user/~a'>~a</a>" u u))
+           ))))))
 
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
