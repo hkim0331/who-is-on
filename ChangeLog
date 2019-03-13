@@ -1,5 +1,9 @@
 2019-03-13  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
+	* [0.5] （外から curlで）動作確認。http://vm2019.local/who/users など。
+
+	* conf/: crontab -l と nginx/site-enable/who-is-in の中身。
+
 	* [0.4.1] update README.md
 
 	* who-is-on-app.rkt: rewrite get /users use with-output-to-string.
