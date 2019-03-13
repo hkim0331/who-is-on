@@ -19,6 +19,9 @@
 (define (arp)
   (exec "/usr/sbin/arp -an"))
 
+(define (broadcast)
+  )
+
 (define (who-is-on)
   (let ((sql3 (sqlite3-connect #:database "who-is-on.sqlite3")))
     (for ([mac (map (lambda (s) (fourth (string-split s))) (arp))])
