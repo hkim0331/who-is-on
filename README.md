@@ -1,11 +1,19 @@
 # who is on?
 
-プログラミングの勉強をもう一年したい学生のためのプロジェクト。研究室出場記録を取る Racket プログラム。
-もうちょっと具体的には、WiFi機器（ケータイ電話を想定している）を持った誰がいつローカルネットに接続したかを記録する。
+プログラミングの勉強をもう一年したい学生のためのプロジェクト。
+研究室出場記録を取る Racket プログラム。
+もうちょっと具体的には、
+WiFi機器（ケータイ電話を想定している）を持った誰がいつローカルネットに接続したかを記録する。
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
 * who-is-on-app.rkt は指定したユーザの MAC アドレスが記録れた日時を求めに応じて表示する。
+
+## thanks
+
+dmac/spin https://github.com/dmac/spin
+
+of cource Racket, Linux, ubuntu, GNU projects.
 
 ## MAC アドレスの取得
 
@@ -27,7 +35,8 @@ cron は linux/unix の基本的機能の一つ。
 SQLite3 にタイムスタンプと共に記録する。
 
 * Racket でデータベースを扱う具体的な方法
-* SQL
+
+* SQL できますか？
 
 ## 出場記録の表示
 
@@ -38,7 +47,7 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 
 * /users
 
-  ユーザ一覧
+  ユーザ一覧の表示とユーザ名から記録へのリンク。
 
 * /user/name/yyyy-mm-dd
 

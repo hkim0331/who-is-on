@@ -1,0 +1,1 @@
+45 * * * * /usr/bin/racket /srv/who-is-on-update.rkt
