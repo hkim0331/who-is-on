@@ -1,7 +1,6 @@
 #!/usr/bin/env racket
 ;;; hkimura, 2019-03-05.
 ;;; update 2019-03-12, 2019-03-13,
-;;;
 #lang racket
 
 (require db)
@@ -45,5 +44,3 @@
 
 (broadcast)
 (who-is-on)
-
-

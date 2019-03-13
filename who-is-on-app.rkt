@@ -42,8 +42,8 @@ hiroshi . kimura . 0331 @ gmail . com
      (with-output-to-string
        (lambda ()
          (for ([u (query-list sql3 "select name from users")])
-           (displayln (format "<li><a href='/user/~a'>~a</a>" u u))
-           ))))))
+           (displayln (format "<li><a href='/user/~a'>~a</a>" u u))))))))
+
 
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
@@ -57,7 +57,7 @@ hiroshi . kimura . 0331 @ gmail . com
     (let* ((name (params req 'name))
            (date (params req 'date))
            (ret (query-list sql3 "select time from mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 and date=$2"
-      name date)))
+                 name date)))
       (html
         (format "<h3>~a, ~a</h3>" name date)
         "<p>"
@@ -80,7 +80,7 @@ hiroshi . kimura . 0331 @ gmail . com
                   (string-join
                     (map (lambda (x) (hh:mm (second x)))
                       (filter (lambda (s) (string=? (date s) (first-date ret))) ret))
-                     " -> "))
+                    " -> "))
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
