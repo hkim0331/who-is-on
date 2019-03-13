@@ -1,5 +1,13 @@
 2019-03-13  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
+	* who-is-on-app.rkt: rewrite get /users use with-output-to-string.
+
+	* who-is-on-update.rkt: rename from who-is-on.rkt
+
+	* who-is-on-seed.rkt: rename from seed.rkt
+
+	* who-is-on-app.rkt: rename from app.rkt
+
 	* who-is-on.rkt: arp エントリーが incomplete な時はインサートしない。
 
 	* [0.3.1] Makefile (git remote set-url origin ssh):
