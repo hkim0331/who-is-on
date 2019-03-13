@@ -1,6 +1,6 @@
 #!/usr/bin/env racket
 ;;; WiFi で出場状況チェック
-;;; by hkimura, 
+;;; by hkimura,
 ;;; update 2019-03-13,
 #lang racket
 
@@ -28,8 +28,8 @@ hiroshi . kimura . 0331 @ gmail . com
 
 ;; macro?
 (define (html contents . other)
-  (format "~a~a~a" 
-    header 
+  (format "~a~a~a"
+    header
     (string-join (cons contents other))
     footer))
 
@@ -73,8 +73,8 @@ hiroshi . kimura . 0331 @ gmail . com
             (let loop ((ret (map vector->list (query-rows sql3 "select date,time from  mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 order by date desc, time" name))))
               (unless (null? ret)
                 (display (format "<p><b>~a</b> " (first-date ret)))
-                (display 
-                  (string-join 
+                (display
+                  (string-join
                     (map (lambda (x) (hh:mm (second x)))
                       (filter (lambda (s) (string=? (date s) (first-date ret))) ret))
                      " -> "))
