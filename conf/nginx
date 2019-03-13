@@ -1,0 +1,14 @@
+server {
+	listen 80;
+	listen [::]:80;
+
+	root /srv/who-is-on;
+	index index.html;
+
+	location /who/ {
+		include proxy_params;
+		rewrite ^/who/(.+) $1 break;
+		proxy_pass http://127.0.0.1:8000/$1;
+	}
+}
+
