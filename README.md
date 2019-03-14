@@ -15,7 +15,9 @@ dmac/spin https://github.com/dmac/spin
 
 of cource Racket, Linux, ubuntu, GNU projects.
 
-## FIXME
+## FIXME/TODO
+
+* [0.5.4] 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
 
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
@@ -28,14 +30,16 @@ of cource Racket, Linux, ubuntu, GNU projects.
 
 * 2019-03-14 macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
   string= で比較できない。mac= を定義するとしても、SQLite3 に組み込むのは面倒だ。
-  0.5.3.3
+  0.5.3.3.
 
 ## MAC アドレスの取得
 
 ICMP ブロードキャストに反応しないホストもあるため、
-サブネットの有効なアドレス一つ一つにタイムアウト付き ping を打つ。
+サブネットの有効なアドレス 10.0.33.1..254 の一つ一つにタイムアウト付き ping を打つ。
 
-ping を直列に実行してはタイムアウト時間 x サブネットの数だけ時間がかかってしまう。
+ping を直列に実行しては
+（タイムアウト時間） x （サブネットの数）
+だけ時間がかかってしまう。
 
 ping を並列に実行する関数を Racket でどう定義するかが問題。
 
