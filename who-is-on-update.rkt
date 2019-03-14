@@ -43,7 +43,8 @@
     (for ([mac (map (lambda (s) (fourth (string-split s))) (arp))])
       (unless (regexp-match #rx"incomplete" mac)
         (query-exec sql3 "insert into mac_addrs (mac) values ($1)" mac)))
+    (display (query-value sql3 "select datetime('now', 'localtime')"))
+    (displayln " update")
     (disconnect sql3)))
 
-(broadcast)
-(who-is-on)
+(and (broadcast) (who-is-on))
