@@ -6,6 +6,12 @@ all:
 	@echo make create to create database and insert seeds
 	@echo make clean
 
+install:
+	cp who-is-on.service /etc/systemd/system
+	systemctl daemon-reload
+	systemctl start
+	systemctl enable
+
 run:
 	racket who-is-on-app.rkt
 
