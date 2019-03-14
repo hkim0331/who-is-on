@@ -22,7 +22,7 @@ ICMP ブロードキャストに反応しないホストもあるため、
 
 ping を直列に実行してはタイムアウト時間 x サブネットの数だけ時間がかかってしまう。
 
-ping を並列に実行する関数は Racket でどう定義できるか？
+ping を並列に実行する関数を Racket でどう定義するかが問題。
 
 ## 定期実行
 
@@ -42,25 +42,29 @@ SQLite3 にタイムスタンプと共に記録する。
 
 Racket の web フレームワーク dmac/spin で web アプリを作成する。
 
-このアプリではデータベースの書き換えを行わない。
-エンドポイントは全て GET メソッドとなる。
-
-* /users
+* get /users
 
   ユーザ一覧の表示とユーザ名から記録へのリンク。
 
-* /user/name/yyyy-mm-dd
+* get /user/name/yyyy-mm-dd
 
   ユーザ name の yyyy-mm-dd の記録。
 
-* /user/name
+* get /user/name
 
   ユーザ name の記録を表示。
+
+* get /users/new, post /users/create
+
+  ユーザを追加する。
+
+ユーザの削除は 0.5.3 では定義していない。
 
 ## Web アプリのデプロイ
 
 流行りは nginx のリバースプロキシだろう。
-それってどうやるの？
+それってどうやるか、わかるかい？
+
 
 勉強できたか？
 

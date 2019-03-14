@@ -6,11 +6,14 @@ all:
 	@echo make create to create database and insert seeds
 	@echo make clean
 
+run:
+	racket who-is-on-app.rkt
+
 ds218j:
-	git remote set-url origin ssh://hkim@ds218j.local/git/who-is-on.git
+	git remote set-url origin ssh://ds218j.local/git/who-is-on.git
 
 syno2:
-	git remote set-url origin ssh://hkim@syno2.local/git/who-is-on.git
+	git remote set-url origin ssh://syno2.local/git/who-is-on.git
 
 create:
 	sqlite3 ${DB} < create.sql
@@ -18,4 +21,3 @@ create:
 
 clean:
 	${RM} *~
-
