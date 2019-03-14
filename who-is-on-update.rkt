@@ -1,15 +1,17 @@
 #!/usr/bin/env racket
 ;;; hkimura, 2019-03-05.
-;;; update 2019-03-12, 2019-03-13,
+;;; update 2019-03-12,
+;;;        2019-03-13,
+;;;        2019-03-14,
+
 #lang racket
 
 (require db)
 
-;; need adjust
-(define *subnet* "192.168.0")
-(define *ping* "/bin/ping")             ; /sbin/ping in macos
-(define *arp* "/usr/sbin/arp")
-(define *db* "./who-is-on.sqlite3")
+(define *db* (or (getenv "WIO_DB") "./who-is-on.sqlite3"))
+(define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
+(define *ping* (or (getenv "WIO_PING") "/bin/ping"))
+(define *subnet* (or (getenv "WIO_SUBNET") "10.0.34"))
 
 (define (exec cmdline)
     (let* ((proc (apply process* (string-split cmdline)))

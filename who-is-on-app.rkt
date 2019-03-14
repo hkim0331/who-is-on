@@ -2,9 +2,13 @@
 ;;; WiFi で出場状況チェック
 ;;; by hkimura,
 ;;; update 2019-03-13,
+;;;        2019-03-14,
 #lang racket
-
 (require db (planet dmac/spin))
+
+(define VERSION "0.5.3")
+
+(define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
 
 (define header
   "<!doctype html>
@@ -18,31 +22,55 @@
 <body>
 <div class='container'>
 <h2>Who is on?</h2>
-<p><a href='/users'>back</a></p>")
+<p><a href='/users'>back</a></p>
+")
 
 (define footer
-  "<hr>
-hiroshi . kimura . 0331 @ gmail . com
+  (format "<hr>
+hiroshi . kimura . 0331 @ gmail . com, ~a.
 </div>
 </body>
-</html>")
+</html>" VERSION))
 
-;; macro?
+;; use macro?
 (define (html contents . other)
   (format "~a~a~a"
     header
     (string-join (cons contents other))
     footer))
 
-(define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
+(post "/users/create"
+  (lambda (req)
+    (query-exec
+      sql3
+      "insert into users (name, wifi) values ($1, $2)"
+      (params req 'name)
+      (params req 'wifi))
+    (html "<p>OK</p>")))
+
+(get "/users/new"
+  (lambda (req)
+    (html
+     (with-output-to-string
+       (lambda ()
+          (displayln "<form method='post' action='/users/create'>")
+          (displayln "<table>")
+          (displayln "<tr><th>name</th><td><input name='name'></td></tr>")
+          (displayln "<tr><th>wifi</th><td><input name='wifi'></td></tr>")
+          (displayln "</table>")
+          (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
+          (displayln "</form>"))))))
 
 (get "/users"
   (lambda (req)
     (html
      (with-output-to-string
        (lambda ()
+         (displayln "<ul>")
          (for ([u (query-list sql3 "select name from users")])
-           (displayln (format "<li><a href='/user/~a'>~a</a>" u u))))))))
+           (displayln (format "<li><a href='/user/~a'>~a</a>" u u)))
+         (displayln "</ul>")
+         (displayln "<p><a href='/users/new'>add...</a></p>"))))))
 
 
 (define (wifi name)
@@ -86,4 +114,5 @@ hiroshi . kimura . 0331 @ gmail . com
 
 (displayln "start at 8000/tcp")
 
-(run #:listen-ip #f #:port 8000)
+;(run #:listen-ip #f #:port 8000)
+(run #:port 8000)

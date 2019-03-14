@@ -1,3 +1,19 @@
+2019-03-14  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.5.3
+	who-is-on-app.rkt: ページにバージョン表示。
+ 	get "/users/new"
+	post "/users/create"
+	update Makefile
+
+	* [0.5.4] cron で決め打ちではなく、
+	プラスマイナス n 分 で Mac アドレス採集する。
+
+	* [0.5.3] ユーザの追加ができる。
+
+	* [0.5.3] 括弧つきのバージョン番号は「これから」の意味に使おう。
+	予定って意味。
+
 2019-03-13  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* [0.5] （外から curlで）動作確認。http://vm2019.local/who/users など。
@@ -23,4 +39,3 @@
 	有効な user.id だけを記録する方がいいか。
 	user.name でも。DB容量的には id だが。
 	pings? も復活させる。
-
