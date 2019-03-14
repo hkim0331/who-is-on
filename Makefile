@@ -20,4 +20,4 @@ create:
 	racket who-is-on-seed.rkt
 
 clean:
-	${RM} *~
+	${RM} *~ *.bak
