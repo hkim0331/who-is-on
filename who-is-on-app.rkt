@@ -6,7 +6,7 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.5.3.1")
+(define VERSION "0.5.3.2")
 
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
 
@@ -30,7 +30,8 @@
 hiroshi . kimura . 0331 @ gmail . com, ~a.
 </div>
 </body>
-</html>" VERSION))
+</html>
+" VERSION))
 
 ;; use macro?
 (define (html contents . other)

@@ -1,9 +1,12 @@
 2019-03-14  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
-	* 0.5.3
+	* 0.5.3.2 bugfix
+	/bin/sh には source コマンドがない。bash にはある。
+	fix typo, who-is-in → who-is-on
+
+	* 0.5.3 /users/new, /users/create
+	update.sh スクリプト。
 	who-is-on-app.rkt: ページにバージョン表示。
- 	get "/users/new"
-	post "/users/create"
 	update Makefile
 
 	* [0.5.4] cron で決め打ちではなく、
