@@ -6,7 +6,7 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.5.3")
+(define VERSION "0.5.3.1")
 
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
 
