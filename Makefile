@@ -9,8 +9,8 @@ all:
 install:
 	cp who-is-on.service /etc/systemd/system
 	systemctl daemon-reload
-	systemctl start
-	systemctl enable
+	systemctl start who-is-on
+	systemctl enable who-is-on
 
 run:
 	racket who-is-on-app.rkt
