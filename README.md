@@ -20,9 +20,6 @@ of cource Racket, Linux, ubuntu, GNU projects.
 
 ### FIXME/TODO
 
-* [0.5.4] 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
-  => アラウンド 60 分後に実行するにしよう。
-
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
   パスベースでlocalhost:8000 へ振るんだが、
@@ -32,6 +29,9 @@ of cource Racket, Linux, ubuntu, GNU projects.
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
+
+* 2019-03-14 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
+  => アラウンド 60 分後に実行するにしよう。0.5.4.
 
 * 2019-03-14 macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
   string= で比較できない。mac= を定義するとしても、SQLite3 に組み込むのは面倒だ。
