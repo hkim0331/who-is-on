@@ -17,8 +17,18 @@ of cource Racket, Linux, ubuntu, GNU projects.
 
 ## FIXME
 
-* macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
+* nginx リバースプロキシーの設定方法
+  名前ベースの仮想ホストは C104 での運用には適当ではない。
+  パスベースでlocalhost:8000 へ振るんだが、
+
+    * localhost の名前が使えないホストがある。
+    * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
+
+## FIXED
+
+* 2019-03-14 macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
   string= で比較できない。mac= を定義するとしても、SQLite3 に組み込むのは面倒だ。
+  0.5.3.3
 
 ## MAC アドレスの取得
 

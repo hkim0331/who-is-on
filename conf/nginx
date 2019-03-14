@@ -1,3 +1,6 @@
+# this does not work.
+# insert location /who/ into default, then works.
+# the reason?
 server {
 	listen 80;
 	listen [::]:80;
