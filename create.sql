@@ -10,5 +10,5 @@ drop table if exists mac_addrs;
 create table mac_addrs (
   id    integer primary key autoincrement,
   mac   char(17),
-  date date default (date('now', 'localtime'),
+  date date default (date('now', 'localtime')),
   time time default (time('now', 'localtime')));

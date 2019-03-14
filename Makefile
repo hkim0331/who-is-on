@@ -17,7 +17,7 @@ syno2:
 
 create:
 	sqlite3 ${DB} < create.sql
-	racket seed.rkt
+	racket who-is-on-seed.rkt
 
 clean:
 	${RM} *~

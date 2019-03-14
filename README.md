@@ -15,6 +15,11 @@ dmac/spin https://github.com/dmac/spin
 
 of cource Racket, Linux, ubuntu, GNU projects.
 
+## FIXME
+
+* macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
+  string= で比較できない。mac= を定義するとしても、SQLite3 に組み込むのは面倒だ。
+
 ## MAC アドレスの取得
 
 ICMP ブロードキャストに反応しないホストもあるため、
