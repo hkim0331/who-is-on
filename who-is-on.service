@@ -1,0 +1,14 @@
+[Unit]
+Description = who-is-on server
+
+[Service]
+WorkingDirectory = /srv/who-is-on
+ExecStart = /usr/bin/racket who-is-on-app.rb
+Restart = always
+TimeoutSec = 300
+Type = simple
+User = ubuntu
+EnvironmentFile=/srv/who-is-on/env/production
+
+[Install]
+WantedBy = multi-user.target
