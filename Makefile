@@ -4,9 +4,15 @@ all:
 	@echo make ds218j to make remote repo to ds218j
 	@echo make syno2 to make remote repo to syno2j
 	@echo make create to create database and insert seeds
+	@echo make install-systemd
 	@echo make clean
 
-install:
+install: adjust-url
+
+adjust-url:
+	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
+
+install-systemd:
 	cp who-is-on.service /etc/systemd/system
 	systemctl daemon-reload
 	systemctl start who-is-on
