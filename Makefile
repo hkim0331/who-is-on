@@ -4,16 +4,24 @@ all:
 	@echo make ds218j to make remote repo to ds218j
 	@echo make syno2 to make remote repo to syno2j
 	@echo make create to create database and insert seeds
-	@echo make adjust-url
-	@echo make restore-url
+	@echo make production
+	@echo make deveopmelt
 	@echo make install-systemd
 	@echo make clean
 
-adjust-url:
-	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
+install:
+	make production
+	for i in update.sh who-is-*.rkt; do \
+		insall -m 0755 $$i /srv/who-is-on;
+	done
 
-restore-url:
-	mv who-is-on-app.rkt.bak who-is-on.rkt
+production:
+	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
+	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-in|"	update.sh
+
+development:
+	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
+	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
 
 install-systemd:
 	cp who-is-on.service /etc/systemd/system

@@ -22,7 +22,7 @@
 <body>
 <div class='container'>
 <h2>Who is on?</h2>
-<p><a href='/users'>back</a></p>
+<p><a href='/w/w/w/w/w/w/w/users'>back</a></p>
 ")
 
 (define footer
@@ -47,7 +47,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
       "insert into users (name, wifi) values ($1, $2)"
       (params req 'name)
       (params req 'wifi))
-    (html "<p>OK</p>")))
+    (html "<p>OK./p>")))
 
 (get "/users/new"
   (lambda (req)
@@ -69,9 +69,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
        (lambda ()
          (displayln "<ul>")
          (for ([u (query-list sql3 "select name from users")])
-           (displayln (format "<li><a href='/user/~a'>~a</a>" u u)))
+           (displayln (format "<li><a href='/w/w/w/w/w/w/w/user/~a'>~a</a>" u u)))
          (displayln "</ul>")
-         (displayln "<p><a href='/users/new'>add user ...</a></p>"))))))
+         (displayln "<p><a href='/w/w/w/w/w/w/w/users/new'>add user ...</a></p>"))))))
 
 
 (define (wifi name)
@@ -115,5 +115,5 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
 
 (displayln "start at 8000/tcp")
 
-;(run #:listen-ip #f #:port 8000)
-(run #:port 8000)
+;; for listen-ip, read tcp-listen in racket manual.
+(run #:listen-ip "127.0.0.1" #:port 8000)

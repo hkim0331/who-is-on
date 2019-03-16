@@ -20,7 +20,10 @@ of cource Racket, Linux, ubuntu, GNU projects.
 
 ### FIXME/TODO
 
-* install の sed ができない。
+* macos の at コマンド
+
+at: pluralization is wrong
+at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
 
 * query-exec の回数を減らす。
   -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
@@ -36,6 +39,14 @@ of cource Racket, Linux, ubuntu, GNU projects.
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
+
+* query-exec の回数を減らす。
+  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+
+* app installer、url の書き換え、DB を上書きyes・noオプション
+  
+* install の sed ができない。
+  => エスケープじゃなく、セパレータを換える作戦で。
 
 * 2019-03-14 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
   => アラウンド 60 分後に実行するにしよう。0.5.4.
