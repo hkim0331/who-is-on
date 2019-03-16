@@ -12,12 +12,12 @@ all:
 install:
 	make production
 	for i in update.sh who-is-*.rkt; do \
-		insall -m 0755 $$i /srv/who-is-on;
+		intsall -m 0755 $$i /srv/who-is-on; \
 	done
 
 production:
 	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
-	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-in|"	update.sh
+	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|"	update.sh
 
 development:
 	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
