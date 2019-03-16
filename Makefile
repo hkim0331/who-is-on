@@ -12,8 +12,9 @@ all:
 install:
 	make production
 	for i in update.sh who-is-*.rkt; do \
-		intsall -m 0755 $$i /srv/who-is-on; \
+		install -m 0755 $$i /srv/who-is-on; \
 	done
+	@echo please restart who-is-on
 
 production:
 	sed -i.bak \
