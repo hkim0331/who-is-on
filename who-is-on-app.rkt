@@ -71,7 +71,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
          (for ([u (query-list sql3 "select name from users")])
            (displayln (format "<li><a href='/user/~a'>~a</a>" u u)))
          (displayln "</ul>")
-         (displayln "<p><a href='/users/new'>add...</a></p>"))))))
+         (displayln "<p><a href='/users/new'>add user ...</a></p>"))))))
 
 
 (define (wifi name)

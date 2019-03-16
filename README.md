@@ -20,6 +20,13 @@ of cource Racket, Linux, ubuntu, GNU projects.
 
 ### FIXME/TODO
 
+* install の sed ができない。
+
+* query-exec の回数を減らす。
+  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+
+* app installer、url の書き換え、DB を上書きyes・noオプション
+
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
   パスベースでlocalhost:8000 へ振るんだが、

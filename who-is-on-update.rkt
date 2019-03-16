@@ -45,13 +45,15 @@
         s))
   (string-join (map pad0 (string-split mac ":")) ":"))
 
+;; executed about once an hour. no need speed up?
+;; query-exec inside for can be joined as one.
 (define (who-is-on)
   (let ((sql3 (sqlite3-connect #:database *db*)))
     (for ([mac (map (lambda (s) (fourth (string-split s))) (arp))])
       (unless (regexp-match #rx"incomplete" mac)
         (query-exec sql3 "insert into mac_addrs (mac) values ($1)" (pad mac))))
     (display (query-value sql3 "select datetime('now', 'localtime')"))
-    (displayln " update")
+    (displayln " success")
     (disconnect sql3)))
 
-(and (broadcast) (who-is-on))
+(and (broadcast) (sleep 2) (who-is-on))
