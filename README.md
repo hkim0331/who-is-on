@@ -30,6 +30,26 @@ $ raco pkg install https://github.com/dmac/spin.git
 
 ### FIXME/TODO
 
+* even if ping to tmint itself, tmit mac does not appear on arp table.
+
+```sh
+$ ping 192.168.0.11
+PING 192.168.0.11 (192.168.0.11) 56(84) bytes of data.
+64 bytes from 192.168.0.11: icmp_seq=1 ttl=64 time=0.022 ms
+64 bytes from 192.168.0.11: icmp_seq=2 ttl=64 time=0.036 ms
+64 bytes from 192.168.0.11: icmp_seq=3 ttl=64 time=0.035 ms
+^C
+
+$ arp -an
+? (192.168.0.14) at 00:11:32:9f:55:02 [ether] on enp0s5
+? (192.168.0.32) at aa:b8:64:3e:d8:25 [ether] on enp0s5
+? (192.168.0.1) at b0:ac:fa:cc:bf:d7 [ether] on enp0s5
+? (192.168.0.2) at 68:5b:35:a0:53:74 [ether] on enp0s5
+? (192.168.0.3) at c0:a5:3e:50:04:ee [ether] on enp0s5
+$
+```
+
+
 * macos の at コマンド
 
   at: pluralization is wrong
