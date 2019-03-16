@@ -1,6 +1,6 @@
 # who is on?
 
-プログラミングの勉強をもう一年したい学生のためのプロジェクト。
+プログラミングの勉強をもう一年したい学生のためのお手本プロジェクト。
 
 研究室出場記録を取る Racket プログラム。
 もうちょっと具体的には、
@@ -12,23 +12,31 @@ WiFi機器（ケータイ電話を想定している）を持った誰がいつ�
 
 * who-is-on-app.rkt は指定したユーザの MAC アドレスが記録れた日時を求めに応じて表示する。
 
-### Thanks
+### requirement
 
-dmac/spin https://github.com/dmac/spin
+開発は macos, linuxmint 19.
 
-of cource Racket, Linux, ubuntu, GNU projects.
+* racket
+
+```sh
+# apt install racket
+```
+
+* dmac/spin pkg
+
+```sh
+$ raco pkg install https://github.com/dmac/spin.git
+```
 
 ### FIXME/TODO
 
 * macos の at コマンド
 
-at: pluralization is wrong
-at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
+  at: pluralization is wrong
+  at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
 
 * query-exec の回数を減らす。
   -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
-
-* app installer、url の書き換え、DB を上書きyes・noオプション
 
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
@@ -40,11 +48,14 @@ at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
 
 ### FIXED
 
+* app installer、url の書き換え、DB を上書きyes・noオプション
+  => make install で。
+
 * query-exec の回数を減らす。
   -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
-  
+
 * install の sed ができない。
   => エスケープじゃなく、セパレータを換える作戦で。
 

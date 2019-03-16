@@ -16,11 +16,19 @@ install:
 	done
 
 production:
-	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
+	sed -i.bak \
+		-e "s|href='/user|href='/w/user|g" \
+		-e "s|href='/new|href='/w/new|" \
+		-e "s|action='/users|href='/w/users|" \
+		who-is-on-app.rkt
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|"	update.sh
 
 development:
-	sed -i.bak -e "s|href='/|href='/w/|g" who-is-on-app.rkt
+	sed -i.bak \
+		-e "s|href='/w/user|href='/user|g" \
+		-e "s|href='/w/new|href='/new|g" \
+		-e "s|action='/w/users|href='/users|" \
+		who-is-on-app.rkt
 	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
 
 install-systemd:

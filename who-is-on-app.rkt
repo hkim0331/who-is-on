@@ -6,8 +6,9 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.5.4")
+(define VERSION "0.5.5")
 
+;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
 
 (define header
@@ -22,7 +23,7 @@
 <body>
 <div class='container'>
 <h2>Who is on?</h2>
-<p><a href='/w/w/w/w/w/w/w/users'>back</a></p>
+<p><a href='/users'>back</a></p>
 ")
 
 (define footer
@@ -54,7 +55,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
     (html
      (with-output-to-string
        (lambda ()
-          (displayln "<form method='post' action='/users/create'>")
+          (displayln "<form method='post' href='/users/create'>")
           (displayln "<table>")
           (displayln "<tr><th>name</th><td><input name='name'></td></tr>")
           (displayln "<tr><th>wifi</th><td><input name='wifi'></td></tr>")
@@ -69,9 +70,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
        (lambda ()
          (displayln "<ul>")
          (for ([u (query-list sql3 "select name from users")])
-           (displayln (format "<li><a href='/w/w/w/w/w/w/w/user/~a'>~a</a>" u u)))
+           (displayln (format "<li><a href='/user/~a'>~a</a>" u u)))
          (displayln "</ul>")
-         (displayln "<p><a href='/w/w/w/w/w/w/w/users/new'>add user ...</a></p>"))))))
+         (displayln "<p><a href='/new'>add user ...</a></p>"))))))
 
 
 (define (wifi name)
