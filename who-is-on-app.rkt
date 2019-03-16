@@ -6,8 +6,9 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.5.4")
+(define VERSION "0.5.5")
 
+;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
 
 (define header
@@ -47,14 +48,14 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
       "insert into users (name, wifi) values ($1, $2)"
       (params req 'name)
       (params req 'wifi))
-    (html "<p>OK</p>")))
+    (html "<p>OK./p>")))
 
 (get "/users/new"
   (lambda (req)
     (html
      (with-output-to-string
        (lambda ()
-          (displayln "<form method='post' action='/users/create'>")
+          (displayln "<form method='post' href='/users/create'>")
           (displayln "<table>")
           (displayln "<tr><th>name</th><td><input name='name'></td></tr>")
           (displayln "<tr><th>wifi</th><td><input name='wifi'></td></tr>")
@@ -71,7 +72,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
          (for ([u (query-list sql3 "select name from users")])
            (displayln (format "<li><a href='/user/~a'>~a</a>" u u)))
          (displayln "</ul>")
-         (displayln "<p><a href='/users/new'>add...</a></p>"))))))
+         (displayln "<p><a href='/new'>add user ...</a></p>"))))))
 
 
 (define (wifi name)
@@ -115,5 +116,5 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
 
 (displayln "start at 8000/tcp")
 
-;(run #:listen-ip #f #:port 8000)
-(run #:port 8000)
+;; for listen-ip, read tcp-listen in racket manual.
+(run #:listen-ip "127.0.0.1" #:port 8000)

@@ -1,0 +1,12 @@
+# .env example
+# adjust and save this as production_top_dir/.env
+
+export WIO_ARP="/where/arp/found"
+export WIO_PING="/where/ping/found"
+export WIO_RACKET="/where/racket/found"
+
+export WIO_DB="/where/database/saved"
+export WIO_SUBNET="xxx.yy.zz"
+
+export WIO_BASE=int_interval_minutes
+export WIO_RAND=int_random_minutes

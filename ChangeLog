@@ -1,15 +1,23 @@
+2019-03-16  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.5.5
+
+	* Makefile (install)
+
+	* Makefile (production, development): production 用に url を書き換える。
+
 2019-03-14  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.5.4 update.sh: cron ではなく、コマンド at に 55 \pm 10 で
-		自分自身を呼び出すスクリプト。
+	自分自身を呼び出すスクリプト。
 
 	* env/.placeholder: 動作に必要な環境変数を .placeholder に書いておく。
 
 	* who-is-on-app.rkt: 127.0.0.1 しかリッスンしない。
-	;(run #:listen-ip #f #:port 8000)
+	;;(run #:listen-ip #f #:port 8000)
 	(run #:port 8000)
 
-	* who-is-on-update.rkt: (pad mac) mac アドレス中のゼロを保管する。
+	* who-is-on-update.rkt: (pad mac) mac アドレス中のゼロを補完する。
 
 	* 0.5.3.2 bugfix
 	/bin/sh には source コマンドがない。bash にはある。

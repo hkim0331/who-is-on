@@ -1,6 +1,6 @@
 # who is on?
 
-プログラミングの勉強をもう一年したい学生のためのプロジェクト。
+プログラミングの勉強をもう一年したい学生のためのお手本プロジェクト。
 
 研究室出場記録を取る Racket プログラム。
 もうちょっと具体的には、
@@ -12,13 +12,31 @@ WiFi機器（ケータイ電話を想定している）を持った誰がいつ�
 
 * who-is-on-app.rkt は指定したユーザの MAC アドレスが記録れた日時を求めに応じて表示する。
 
-### Thanks
+### requirement
 
-dmac/spin https://github.com/dmac/spin
+開発は macos, linuxmint 19.
 
-of cource Racket, Linux, ubuntu, GNU projects.
+* racket
+
+```sh
+# apt install racket
+```
+
+* dmac/spin pkg
+
+```sh
+$ raco pkg install https://github.com/dmac/spin.git
+```
 
 ### FIXME/TODO
+
+* macos の at コマンド
+
+  at: pluralization is wrong
+  at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
+
+* query-exec の回数を減らす。
+  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
 
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
@@ -29,6 +47,17 @@ of cource Racket, Linux, ubuntu, GNU projects.
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
+
+* app installer、url の書き換え、DB を上書きyes・noオプション
+  => make install で。
+
+* query-exec の回数を減らす。
+  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+
+* app installer、url の書き換え、DB を上書きyes・noオプション
+
+* install の sed ができない。
+  => エスケープじゃなく、セパレータを換える作戦で。
 
 * 2019-03-14 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
   => アラウンド 60 分後に実行するにしよう。0.5.4.
@@ -50,17 +79,18 @@ ping を並列に実行する関数を Racket でどう定義するかが問題�
 
 ### 定期実行
 
-プログラム自体でゆっくりループするか、cron で。
+プログラム自体でゆっくりループするか、cron で、
+と思ったが、at コマンド で自分自身を 55〜65 分後に呼び出す方法に変更。0.5.4
 
-cron は linux/unix の基本的機能の一つ。
+cron, at は linux/unix の基本的機能の一つ。
 
 ### 取得した Mac アドレスの記録
 
 SQLite3 にタイムスタンプと共に記録する。
 
-* Racket でデータベースを扱う具体的な方法
+* SQL できるようになれ。
 
-* SQL できますか？
+* Racket でデータベースを扱う具体的な方法を身につけろ。
 
 ### 出場記録の表示
 
