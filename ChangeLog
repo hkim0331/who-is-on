@@ -1,3 +1,11 @@
+2019-03-17  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.6
+	* who-is-on-app.rkt: get "/"
+	* env-template にマジ設定の一部を
+	* .gitignore に who-is-on.sqlite3, .env, update.log を無視する
+
+
 2019-03-16  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.5.5

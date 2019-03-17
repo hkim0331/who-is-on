@@ -1,3 +1,4 @@
-!*.sql
-env/
+!create.sql
 .env
+update.log
+who-is-on.sqlite3
