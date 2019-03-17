@@ -3,6 +3,7 @@
 ;;; by hkimura,
 ;;; update 2019-03-13,
 ;;;        2019-03-14,
+;;;        2019-03-17,
 #lang racket
 (require db (planet dmac/spin))
 
@@ -40,6 +41,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
     header
     (string-join (cons contents other))
     footer))
+
+(get "/"
+  (lambda ()
+    (html
+      "<p>try <a href='/users'>/users</a></p>")))
 
 (post "/users/create"
   (lambda (req)

@@ -28,6 +28,19 @@ WiFi機器（ケータイ電話を想定している）を持った誰がいつ�
 $ raco pkg install https://github.com/dmac/spin.git
 ```
 
+### install
+
+```sh
+$ make create
+$ cp env-template /some/where/.env
+$ ./upate.sh
+$ racket ./who-is-on.rkt
+```
+
+```
+$ open http://localhost:8000/users
+```
+
 ### FIXME/TODO
 
 * even if ping to tmint itself, tmit mac does not appear on arp table.

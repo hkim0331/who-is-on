@@ -1,12 +1,12 @@
 # .env example
 # adjust and save this as production_top_dir/.env
 
-export WIO_ARP="/where/arp/found"
-export WIO_PING="/where/ping/found"
-export WIO_RACKET="/where/racket/found"
+export WIO_ARP="/usr/sbin/arp"
+export WIO_PING="/sbin/ping"
+export WIO_RACKET="/usr/local/bin/racket"
 
-export WIO_DB="/where/database/saved"
-export WIO_SUBNET="xxx.yy.zz"
+export WIO_DB="./who-is-on.sqlite3"
+export WIO_SUBNET="192.168.0"
 
-export WIO_BASE=int_interval_minutes
-export WIO_RAND=int_random_minutes
+export WIO_BASE=5
+export WIO_RAND=5
