@@ -7,7 +7,7 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.6")
+(define VERSION "0.6.1")
 
 ;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
@@ -45,7 +45,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
 (get "/"
   (lambda ()
     (html
-      "<p>try <a href='/users'>/users</a></p>")))
+      "<p>try <a href='/users'>/users</a>.</p>")))
 
 (post "/users/create"
   (lambda (req)

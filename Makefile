@@ -1,18 +1,20 @@
+DEST=/srv/who-is-on
 DB=who-is-on.sqlite3
 
 all:
+	@echo make install make system to ${DEST}
+	@echo make install-systemd
+	@echo make production modify source files for production
+	@echo make developmelt modify source files for development
 	@echo make ds218j to make remote repo to ds218j
 	@echo make syno2 to make remote repo to syno2j
 	@echo make create to create database and insert seeds
-	@echo make production
-	@echo make deveopmelt
-	@echo make install-systemd
 	@echo make clean
 
 install:
 	make production
 	for i in update.sh who-is-*.rkt; do \
-		install -m 0755 $$i /srv/who-is-on; \
+		install -m 0755 $$i ${DEST}; \
 	done
 	@echo please restart who-is-on
 
@@ -31,7 +33,7 @@ development:
 	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
 
 install-systemd:
-	cp who-is-on.service /etc/systemd/system
+	cp who-is-on.service /lib/systemd/system/
 	systemctl daemon-reload
 	systemctl start who-is-on
 	systemctl enable who-is-on

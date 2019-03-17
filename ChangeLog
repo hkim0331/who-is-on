@@ -1,7 +1,9 @@
 2019-03-17  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
-	* 0.6
-	* who-is-on-app.rkt: get "/"
+	* 0.6.1 Makefile (install-systemd): systemd のユーザからのインストール先は
+	/lib/systemd/system でした。
+
+	* 0.6 who-is-on-app.rkt: get "/"
 	* env-template にマジ設定の一部を
 	* .gitignore に who-is-on.sqlite3, .env, update.log を無視する
 
@@ -9,28 +11,22 @@
 2019-03-16  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.5.5
-
 	* Makefile (install)
-
 	* Makefile (production, development): production 用に url を書き換える。
 
 2019-03-14  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.5.4 update.sh: cron ではなく、コマンド at に 55 \pm 10 で
 	自分自身を呼び出すスクリプト。
-
 	* env/.placeholder: 動作に必要な環境変数を .placeholder に書いておく。
-
 	* who-is-on-app.rkt: 127.0.0.1 しかリッスンしない。
 	;;(run #:listen-ip #f #:port 8000)
 	(run #:port 8000)
-
 	* who-is-on-update.rkt: (pad mac) mac アドレス中のゼロを補完する。
 
 	* 0.5.3.2 bugfix
 	/bin/sh には source コマンドがない。bash にはある。
 	fix typo, who-is-in → who-is-on
-
 	* 0.5.3 /users/new, /users/create
 	update.sh スクリプト。
 	who-is-on-app.rkt: ページにバージョン表示。
