@@ -43,7 +43,11 @@ $ open http://localhost:8000/users
 
 ### FIXME/TODO
 
-* even if ping to tmint itself, tmit mac does not appear on arp table.
+* terminate who-is-on-app by ^C, cliked end points will be ehoed back.
+  useless. danger. how to stop it?
+
+* even if ping from tmint to tmint itself, tmint's mac-addr does not
+  appear on arp table.
 
 ```sh
 $ ping 192.168.0.11
