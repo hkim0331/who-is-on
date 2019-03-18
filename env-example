@@ -1,5 +1,5 @@
 # .env example
-# adjust and save this as production_top_dir/.env
+# adjust and save this to ${production_top_dir}/.env
 
 export WIO_ARP="/usr/sbin/arp"
 export WIO_PING="/sbin/ping"
