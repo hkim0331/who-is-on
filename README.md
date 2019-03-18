@@ -1,16 +1,17 @@
 # who is on?
 
-プログラミングの勉強をもう一年したい学生のためのお手本プロジェクト。
+プログラミングの勉強をもう一年したい学生のための春休みお手本プロジェクト。
 
-研究室出場記録を取る Racket プログラム。
+内容は研究室出場記録を取る Racket プログラム。
 もうちょっと具体的には、
-WiFi機器（ケータイ電話を想定している）を持った誰がいつローカルネットに接続したかを記録する。
+WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録する。
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
-* update.sh は who-is-on-update.rkt を定期的に呼びだす。
-
 * who-is-on-app.rkt は指定したユーザの MAC アドレスが記録れた日時を求めに応じて表示する。
+
+* update.sh は who-is-on-update.rkt を定期的に呼びだす。自分自身を at で呼ぶ。
+
 
 ### requirement
 
@@ -65,8 +66,6 @@ $ arp -an
 ? (192.168.0.3) at c0:a5:3e:50:04:ee [ether] on enp0s5
 $
 ```
-
-
 * macos の at コマンド
 
   at: pluralization is wrong
@@ -137,26 +136,25 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 
   ユーザ一覧の表示とユーザ名から記録へのリンク。
 
-* get /user/name/yyyy-mm-dd
-
-  ユーザ name の yyyy-mm-dd の記録。
-
 * get /user/name
 
   ユーザ name の記録を表示。
+
+* get /user/name/yyyy-mm-dd
+
+  ユーザ name の yyyy-mm-dd の記録。 /user/name があれば不要か。
 
 * get /users/new, post /users/create
 
   ユーザを追加する。
 
-ユーザの削除は 0.5.3 では定義していない。
+ユーザの削除は 0.6.2 まで定義していない。
 
 ### Web アプリのデプロイ
 
 流行りは nginx のリバースプロキシだろう。
-それってどうやるか、わかるかい？
 
-_勉強できたか？_
+## 勉強なったか？
 
 ---
 hiroshi.kimura.0331@gmail.com
