@@ -45,7 +45,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
 (get "/"
   (lambda ()
     (html
-      "<p>try <a href='/users'>/users</a>.</p>")))
+      "<p>try <a href='/users'>here</a>.</p>")))
 
 (post "/users/create"
   (lambda (req)
@@ -97,7 +97,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
       (html
         (format "<h3>~a, ~a</h3>" name date)
         "<p>"
-        (string-join (map hh:mm ret) " -> ")
+        (string-join (map hh:mm ret) " &rarr; ")
         "</p>"))))
 
 (get "/user/:name"
@@ -116,7 +116,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
                   (string-join
                     (map (lambda (x) (hh:mm (second x)))
                       (filter (lambda (s) (string=? (date s) (first-date ret))) ret))
-                    " -> "))
+                    " &rarr; "))
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
