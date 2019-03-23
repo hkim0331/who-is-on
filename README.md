@@ -20,7 +20,7 @@ WiFi機器（ケータイ電話を想定している）を持った誰がいつ 
 * racket, sqlite3
 
 ```sh
-# apt install racket sqlite3
+$ sudo apt install racket sqlite3
 ```
 * dmac/spin pkg
 
@@ -73,18 +73,17 @@ $
 ```
 * macos の at コマンド
 
-  at: pluralization is wrong
-  at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
+    at: pluralization is wrong
+    at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
 
 * query-exec の回数を減らす。
-  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+  → 1時間に一度実行するくらいの頻度で呼ぶ関数だ。血眼にならないでよい。
 
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
   パスベースでlocalhost:8000 へ振るんだが、
 
     * localhost の名前が使えないホストがある。
-
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
@@ -92,18 +91,18 @@ $
 * 0.7 /users/ のページに現在値を表示
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
-  => make install で。
+  →  make install で。
 
 * query-exec の回数を減らす。
-  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+  → 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
 
 * install の sed ができない。
-  => エスケープじゃなく、セパレータを換える作戦で。
+  →  エスケープじゃなく、セパレータを換える作戦で。
 
 * 2019-03-14 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
-  => アラウンド 60 分後に実行するにしよう。0.5.4.
+  → アラウンド 60 分後に実行するにしよう。0.5.4.
 
 * 2019-03-14 macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
   string= で比較できない。mac= を定義するとしても、SQLite3 に組み込むのは面倒だ。
@@ -118,7 +117,7 @@ ping を直列に実行しては
 （タイムアウト時間） x （サブネットの数）
 だけ時間がかかってしまう。
 
-ping を並列に実行する関数を Racket でどう定義するかが問題。
+ping を並列に実行する関数を Racket でどう定義するかが問題。スレッド使え。
 
 ### 定期実行
 
@@ -142,6 +141,7 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 * get /users
 
   ユーザ一覧の表示とユーザ名から記録へのリンク。
+  １時間前までに記録があれば bullet を赤で。0.7
 
 * get /user/name
 
@@ -161,7 +161,9 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 
 流行りは nginx のリバースプロキシだろう。
 
-## 勉強なったか？
+
+__勉強になったか？__
+
 
 ---
 hiroshi.kimura.0331@gmail.com
