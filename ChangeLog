@@ -1,3 +1,8 @@
+2019-03-23  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.7 who-is-on-app.rkt: status? を定義し、過去１時間以内に記録が見つかる
+	場合 /users に赤で表示。ping を出さずに調べる。
+
 2019-03-18  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* update README.md
