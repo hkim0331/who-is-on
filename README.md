@@ -8,7 +8,7 @@ WiFi機器（ケータイ電話を想定している）を持った誰がいつ 
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
-* who-is-on-app.rkt は指定したユーザの MAC アドレスが記録れた日時を求めに応じて表示する。
+* who-is-on-app.rkt は指定したユーザの MAC アドレスが記録された日時を求めに応じて表示する。
 
 * update.sh は who-is-on-update.rkt を定期的に呼びだす。自分自身を at で呼ぶ。
 
@@ -17,12 +17,11 @@ WiFi機器（ケータイ電話を想定している）を持った誰がいつ 
 
 開発は macos, linuxmint 19.
 
-* racket
+* racket, sqlite3
 
 ```sh
-# apt install racket
+# apt install racket sqlite3
 ```
-
 * dmac/spin pkg
 
 ```sh
@@ -34,19 +33,23 @@ $ raco pkg install https://github.com/dmac/spin.git
 ```sh
 $ make create
 $ cp env-template /some/where/.env
-$ ./upate.sh
-$ racket ./who-is-on.rkt
+$ make install
+$ racket ./who-is-on-update.rkt
+$ racket ./who-is-on-app.sh
 ```
 
 ```
 $ open http://localhost:8000/users
 ```
 
+update.sh は who-is-on-update.rkt をほぼ１時間おきに実行する。
+who-is-on.service はその systemd ファイル。
+
 ### FIXME/TODO
 
 * who-is-on-update.rb に --verbose オプション
 
-* terminate who-is-on-app by ^C, cliked end points will be ehoed back.
+* terminate who-is-on-app by ^C, cliked end points will be echoed back.
   useless. danger. how to stop it?
 
 * even if ping from tmint to tmint itself, tmint's mac-addr does not
