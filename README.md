@@ -86,7 +86,7 @@ $
 
 ### FIXED
 
-* /users/ のページに現在値を表示
+* 0.7 /users/ のページに現在値を表示
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
   => make install で。
