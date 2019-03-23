@@ -36,7 +36,7 @@
 
 (define footer
   (format "<hr>
-hiroshi . kimura . 0331 @ gmail . com, ~a.
+hiroshi . kimura . 0331 @ gmail . com, ~a,
 <a href='https://github.com/hkim0331/who-is-on'>github</a>
 </div>
 </body>
