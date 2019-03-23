@@ -13,6 +13,11 @@
 (define *ping* (or (getenv "WIO_PING") "/bin/ping"))
 (define *subnet* (or (getenv "WIO_SUBNET") "10.0.34"))
 
+;; (define *verbose* false)
+;; (let ((args (current-command-line-arguments)))
+;;   (when (string=? "--verbose" (vector-ref args 0))
+;;     (set! *verbose* true)))
+
 (define (exec cmdline)
     (let* ((proc (apply process* (string-split cmdline)))
            (port (first proc))
