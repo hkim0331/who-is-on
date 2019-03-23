@@ -2,16 +2,16 @@
 
 プログラミングの勉強をもう一年したい学生のための春休みお手本プロジェクト。
 
-内容は研究室出場記録を取る Racket プログラム。
-もうちょっと具体的には、
-WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録する。
+課題は研究室出場記録を取る Racket プログラム。
+具体的には、
+WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録し、
+ウェブで表示する。
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
 * who-is-on-app.rkt は指定したユーザの MAC アドレスが記録された日時を求めに応じて表示する。
 
-* update.sh は who-is-on-update.rkt を定期的に呼びだす。自分自身を at で呼ぶ。
-
+* update.sh は who-is-on-update.rkt を定期的に呼んだ後、update 自身を at で呼ぶ。
 
 ### requirement
 
@@ -49,7 +49,7 @@ who-is-on.service はその systemd ファイル。
 
 * who-is-on-update.rb に --verbose オプション
 
-* terminate who-is-on-app by ^C, cliked end points will be echoed back.
+* when terminate who-is-on-app by ^C, visited end points will be echoed back.
   useless. danger. how to stop it?
 
 * even if ping from tmint to tmint itself, tmint's mac-addr does not
