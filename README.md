@@ -44,6 +44,8 @@ $ open http://localhost:8000/users
 
 ### FIXME/TODO
 
+* /users/ のページに現在値を表示
+
 * terminate who-is-on-app by ^C, cliked end points will be ehoed back.
   useless. danger. how to stop it?
 
