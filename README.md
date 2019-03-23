@@ -44,7 +44,7 @@ $ open http://localhost:8000/users
 
 ### FIXME/TODO
 
-* /users/ のページに現在値を表示
+* who-is-on-update.rb に --verbose オプション
 
 * terminate who-is-on-app by ^C, cliked end points will be ehoed back.
   useless. danger. how to stop it?
@@ -85,6 +85,8 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
+
+* /users/ のページに現在値を表示
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
   => make install で。
