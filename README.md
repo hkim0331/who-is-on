@@ -49,7 +49,7 @@ who-is-on.service はその systemd ファイル。
 
 * who-is-on-update.rb に --verbose オプション
 
-* terminate who-is-on-app by ^C, cliked end points will be echoed back.
+* when terminate who-is-on-app by ^C, visited end points will be echoed back.
   useless. danger. how to stop it?
 
 * even if ping from tmint to tmint itself, tmint's mac-addr does not
