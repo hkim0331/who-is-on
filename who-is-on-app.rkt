@@ -1,6 +1,7 @@
 #!/usr/bin/env racket
-;;; WiFi で出場状況チェック
-;;; by hkimura,
+;;; WiFi で出場状況チェック by hkimura
+;;; make install will rewrite this file. end points.
+;;;
 ;;; update 2019-03-13,
 ;;;        2019-03-14,
 ;;;        2019-03-17,
@@ -36,6 +37,7 @@
 (define footer
   (format "<hr>
 hiroshi . kimura . 0331 @ gmail . com, ~a.
+<a href='https://github.com/hkim0331/who-is-on'>github</a>
 </div>
 </body>
 </html>
