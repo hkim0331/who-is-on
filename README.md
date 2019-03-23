@@ -76,9 +76,6 @@ $
     at: pluralization is wrong
     at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
 
-* query-exec の回数を減らす。
-  → 1時間に一度実行するくらいの頻度で呼ぶ関数だ。血眼にならないでよい。
-
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
   パスベースでlocalhost:8000 へ振るんだが、
@@ -91,22 +88,27 @@ $
 * 0.7 /users/ のページに現在値を表示
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
-  →  make install で。
+
+    →  make install で。
 
 * query-exec の回数を減らす。
-  → 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+
+    → 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
 
 * install の sed ができない。
+
   →  エスケープじゃなく、セパレータを換える作戦で。
 
 * 2019-03-14 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
+
   → アラウンド 60 分後に実行するにしよう。0.5.4.
 
 * 2019-03-14 macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
   string= で比較できない。mac= を定義するとしても、SQLite3 に組み込むのは面倒だ。
-  0.5.3.3.
+
+    → padzero を定義。0.5.3.3
 
 ### MAC アドレスの取得
 
@@ -162,7 +164,7 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 流行りは nginx のリバースプロキシだろう。
 
 
-__勉強になったか？__
+__勉強になった？__
 
 
 ---
