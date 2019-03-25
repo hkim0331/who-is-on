@@ -1,13 +1,16 @@
 #!/usr/bin/env racket
-;;; WiFi で出場状況チェック
-;;; by hkimura,
+;;; WiFi で出場状況チェック by hkimura
+;;; make install will rewrite this file. end points.
+;;;
 ;;; update 2019-03-13,
 ;;;        2019-03-14,
 ;;;        2019-03-17,
+;;;        2019-03-23,
+
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.6.2")
+(define VERSION "0.7")
 
 ;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
@@ -20,6 +23,10 @@
 <link
  rel='stylesheet'
  href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T' crossorigin='anonymous'/>
+<style>
+.red { color: red; }
+.black { color: black; }
+</style>
 </head>
 <body>
 <div class='container'>
@@ -29,7 +36,8 @@
 
 (define footer
   (format "<hr>
-hiroshi . kimura . 0331 @ gmail . com, ~a.
+hiroshi . kimura . 0331 @ gmail . com, ~a,
+<a href='https://github.com/hkim0331/who-is-on'>github</a>
 </div>
 </body>
 </html>
@@ -69,6 +77,17 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
 
+(define (status? name)
+  (define (hh s)
+    (string->number (first (string-split s ":"))))
+  (let* ((query "select date,time from mac_addrs where mac=$1 order by id desc limit 1")
+         (ret (query-rows sql3 query (wifi name))))
+    (if (null? ret)
+        false
+        (let* ((now (string-split (query-value sql3 "select datetime('now','localtime')"))))
+          (and (string=? (first now) (vector-ref (first ret) 0))
+               (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
+
 (get "/users"
   (lambda (req)
     (html
@@ -76,7 +95,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
        (lambda ()
          (displayln "<ul>")
          (for ([u (query-list sql3 "select name from users")])
-           (displayln (format "<li><a href='/user/~a'>~a</a>" u u)))
+           (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
+                              (if (status? u) "red" "black")
+                              u u )))
          (displayln "</ul>")
          (displayln "<p><a href='/users/new'>add user ...</a></p>"))))))
 
@@ -121,6 +142,5 @@ hiroshi . kimura . 0331 @ gmail . com, ~a.
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
 (displayln "start at 8000/tcp")
-
 ;; for listen-ip, read tcp-listen in racket manual.
 (run #:listen-ip "127.0.0.1" #:port 8000)

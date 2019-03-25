@@ -2,27 +2,26 @@
 
 プログラミングの勉強をもう一年したい学生のための春休みお手本プロジェクト。
 
-内容は研究室出場記録を取る Racket プログラム。
-もうちょっと具体的には、
-WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録する。
+課題は研究室出場記録を取る Racket プログラム。
+具体的には、
+WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録し、
+ウェブで表示する。
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
-* who-is-on-app.rkt は指定したユーザの MAC アドレスが記録れた日時を求めに応じて表示する。
+* who-is-on-app.rkt は指定したユーザの MAC アドレスが記録された日時を求めに応じて表示する。
 
-* update.sh は who-is-on-update.rkt を定期的に呼びだす。自分自身を at で呼ぶ。
-
+* update.sh は who-is-on-update.rkt を定期的に呼んだ後、update 自身を at で呼ぶ。
 
 ### requirement
 
 開発は macos, linuxmint 19.
 
-* racket
+* racket, sqlite3
 
 ```sh
-# apt install racket
+$ sudo apt install racket sqlite3
 ```
-
 * dmac/spin pkg
 
 ```sh
@@ -34,17 +33,23 @@ $ raco pkg install https://github.com/dmac/spin.git
 ```sh
 $ make create
 $ cp env-template /some/where/.env
-$ ./upate.sh
-$ racket ./who-is-on.rkt
+$ make install
+$ racket ./who-is-on-update.rkt
+$ racket ./who-is-on-app.sh
 ```
 
 ```
 $ open http://localhost:8000/users
 ```
 
+update.sh は who-is-on-update.rkt をほぼ１時間おきに実行する。
+who-is-on.service はその systemd ファイル。
+
 ### FIXME/TODO
 
-* terminate who-is-on-app by ^C, cliked end points will be ehoed back.
+* who-is-on-update.rb に --verbose オプション
+
+* when terminate who-is-on-app by ^C, visited end points will be echoed back.
   useless. danger. how to stop it?
 
 * even if ping from tmint to tmint itself, tmint's mac-addr does not
@@ -68,39 +73,42 @@ $
 ```
 * macos の at コマンド
 
-  at: pluralization is wrong
-  at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
-
-* query-exec の回数を減らす。
-  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+    at: pluralization is wrong
+    at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
 
 * nginx リバースプロキシーの設定方法
   名前ベースの仮想ホストは C104 での運用には適当ではない。
   パスベースでlocalhost:8000 へ振るんだが、
 
     * localhost の名前が使えないホストがある。
-
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
 
+* 0.7 /users/ のページに現在値を表示
+
 * app installer、url の書き換え、DB を上書きyes・noオプション
-  => make install で。
+
+    →  make install で。
 
 * query-exec の回数を減らす。
-  -> 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
+
+    → 1時間に一度実行するくらいの頻度で呼ぶ関数。血眼にならないでよい。
 
 * app installer、url の書き換え、DB を上書きyes・noオプション
 
 * install の sed ができない。
-  => エスケープじゃなく、セパレータを換える作戦で。
+
+  →  エスケープじゃなく、セパレータを換える作戦で。
 
 * 2019-03-14 10 分おきに cron から起こすとして、確率 1/3 で実行するのは？
-  => アラウンド 60 分後に実行するにしよう。0.5.4.
+
+  → アラウンド 60 分後に実行するにしよう。0.5.4.
 
 * 2019-03-14 macos の /usr/sbin/arp では 00 を 0 に短縮して表示する。
   string= で比較できない。mac= を定義するとしても、SQLite3 に組み込むのは面倒だ。
-  0.5.3.3.
+
+    → padzero を定義。0.5.3.3
 
 ### MAC アドレスの取得
 
@@ -111,7 +119,7 @@ ping を直列に実行しては
 （タイムアウト時間） x （サブネットの数）
 だけ時間がかかってしまう。
 
-ping を並列に実行する関数を Racket でどう定義するかが問題。
+ping を並列に実行する関数を Racket でどう定義するかが問題。スレッド使え。
 
 ### 定期実行
 
@@ -135,6 +143,7 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 * get /users
 
   ユーザ一覧の表示とユーザ名から記録へのリンク。
+  １時間前までに記録があれば bullet を赤で。0.7
 
 * get /user/name
 
@@ -154,7 +163,9 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 
 流行りは nginx のリバースプロキシだろう。
 
-## 勉強なったか？
+
+__勉強になった？__
+
 
 ---
 hiroshi.kimura.0331@gmail.com
