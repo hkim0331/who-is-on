@@ -6,6 +6,7 @@
 ;;;        2019-03-14,
 ;;;        2019-03-17,
 ;;;        2019-03-23,
+;;;        2019-03-25 asynchronous update
 
 #lang racket
 (require db (planet dmac/spin))
@@ -49,6 +50,16 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     header
     (string-join (cons contents other))
     footer))
+
+;; asynchronous update
+;; FIXME: absolute path.
+(post "/un"
+      (lambda ()
+        (let ((cmd (format "cd ~a && . .env && ./who-is-on-update.rkt"
+                           (current-directory-for-user))))
+          (if (system cmd)
+            "OK"
+            (format "FAIL: ~a" cmd)))))
 
 (get "/"
   (lambda ()

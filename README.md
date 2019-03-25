@@ -6,6 +6,7 @@
 具体的には、
 WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録し、
 ウェブで表示する。
+who-is-on を実行する PC と WiFi機器が同一 LAN になければダメ。
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
@@ -46,6 +47,8 @@ update.sh は who-is-on-update.rkt をほぼ１時間おきに実行する。
 who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
+
+* who-is-on-app に update-now の機能
 
 * who-is-on-update.rb に --verbose オプション
 
