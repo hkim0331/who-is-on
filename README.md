@@ -48,8 +48,6 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
-* who-is-on-app に update-now の機能
-
 * who-is-on-update.rb に --verbose オプション
 
 * when terminate who-is-on-app by ^C, visited end points will be echoed back.
@@ -87,6 +85,8 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
+
+* 0.7.1 who-is-on-app asynchronous update.
 
 * 0.7 /users/ のページに現在値を表示
 

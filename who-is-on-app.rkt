@@ -11,7 +11,7 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.7")
+(define VERSION "0.7.1")
 
 ;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
@@ -52,7 +52,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     footer))
 
 ;; asynchronous update
-;; FIXME: absolute path.
 (post "/un"
       (lambda ()
         (let ((cmd (format "cd ~a && . .env && ./who-is-on-update.rkt"
