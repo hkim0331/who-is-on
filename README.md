@@ -50,10 +50,16 @@ who-is-on.service はその systemd ファイル。
 
 * [0.7.1] who-is-on-app asynchronous update.
 
+なんだ、この uptime は？
+```
+ubuntu@vm2019:/srv/who-is-on$ uptime
+ 13:10:01 up 6 days,  1:44,  2 users,  load average: 21.10, 15.35, 10.84
+```
+
 まだきちんと動いていない。2019-03-25
 
 ```
-http POST http://c104.melt.kyutech.ac.jp/w/un                12:13:34
+http POST http://c104.melt.kyutech.ac.jp/w/un
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Encoding: gzip
@@ -66,6 +72,11 @@ Transfer-Encoding: chunked
 FAIL: cd /srv/who-is-on/ && . .env && ./who-is-on-update.rkt
 ```
 
+```
+$ http POST http://c104.melt.kyutech.ac.jp/w/un
+
+http: error: Request timed out (30s).
+```
 
 * who-is-on-update.rb に --verbose オプション
 

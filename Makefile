@@ -11,9 +11,8 @@ all:
 	@echo make create to create database and insert seeds
 	@echo make clean
 
-install:
-	make production
-	for i in update.sh who-is-*.rkt; do \
+install:production
+	for i in update.sh update-async.sh who-is-*.rkt; do \
 		install -m 0755 $$i ${DEST}; \
 	done
 	@echo please restart who-is-on
@@ -24,6 +23,7 @@ production:
 		-e "s|action='/users|action='/w/users|" \
 		who-is-on-app.rkt
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" update.sh
+	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" update-async.sh
 
 development:
 	sed -i.bak \
@@ -31,6 +31,7 @@ development:
 		-e "s|action='/w/users|action='/users|" \
 		who-is-on-app.rkt
 	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
+	sed -i.bak -e 's|DIR=.*|DIR=.|' update-async.sh
 
 install-systemd:
 	cp who-is-on.service /lib/systemd/system/
