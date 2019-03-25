@@ -51,11 +51,13 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (string-join (cons contents other))
     footer))
 
+;; FIXME: do not work
 ;; asynchronous update
 (post "/un"
       (lambda ()
-        (let ((cmd (format "cd ~a && . .env && ./who-is-on-update.rkt"
-                           (current-directory-for-user))))
+        (let* ((pwd (current-directory-for-user))
+               (cmd (format ". ~a.env && ~awho-is-on-update.rkt"
+                           pwd pwd)))
           (if (system cmd)
             "OK"
             (format "FAIL: ~a" cmd)))))

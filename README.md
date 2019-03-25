@@ -48,6 +48,25 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* [0.7.1] who-is-on-app asynchronous update.
+
+まだきちんと動いていない。2019-03-25
+
+```
+http POST http://c104.melt.kyutech.ac.jp/w/un                12:13:34
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Encoding: gzip
+Content-Type: text/html; charset=utf-8
+Date: Mon, 25 Mar 2019 03:16:28 GMT
+Last-Modified: Mon, 25 Mar 2019 03:16:28 GMT
+Server: nginx/1.14.0 (Ubuntu)
+Transfer-Encoding: chunked
+
+FAIL: cd /srv/who-is-on/ && . .env && ./who-is-on-update.rkt
+```
+
+
 * who-is-on-update.rb に --verbose オプション
 
 * when terminate who-is-on-app by ^C, visited end points will be echoed back.
@@ -85,8 +104,6 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
-
-* 0.7.1 who-is-on-app asynchronous update.
 
 * 0.7 /users/ のページに現在値を表示
 
