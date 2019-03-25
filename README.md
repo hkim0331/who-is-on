@@ -53,7 +53,7 @@ who-is-on.service はその systemd ファイル。
 まだきちんと動いていない。2019-03-25
 
 ```
-http POST http://c104.melt.kyutech.ac.jp/w/un                12:13:34
+http POST http://c104.melt.kyutech.ac.jp/w/un
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Encoding: gzip
@@ -66,6 +66,11 @@ Transfer-Encoding: chunked
 FAIL: cd /srv/who-is-on/ && . .env && ./who-is-on-update.rkt
 ```
 
+```
+$ http POST http://c104.melt.kyutech.ac.jp/w/un
+
+http: error: Request timed out (30s).
+```
 
 * who-is-on-update.rb に --verbose オプション
 
