@@ -6,11 +6,12 @@
 ;;;        2019-03-14,
 ;;;        2019-03-17,
 ;;;        2019-03-23,
+;;;        2019-03-25 asynchronous update
 
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.7")
+(define VERSION "0.7.1")
 
 ;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
@@ -49,6 +50,15 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     header
     (string-join (cons contents other))
     footer))
+
+;; asynchronous update
+(post "/un"
+      (lambda ()
+        (let ((cmd (format "cd ~a && . .env && ./who-is-on-update.rkt"
+                           (current-directory-for-user))))
+          (if (system cmd)
+            "OK"
+            (format "FAIL: ~a" cmd)))))
 
 (get "/"
   (lambda ()

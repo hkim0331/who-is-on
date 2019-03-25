@@ -6,6 +6,7 @@
 具体的には、
 WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録し、
 ウェブで表示する。
+who-is-on を実行する PC と WiFi機器が同一 LAN になければダメ。
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
@@ -84,6 +85,8 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
+
+* 0.7.1 who-is-on-app asynchronous update.
 
 * 0.7 /users/ のページに現在値を表示
 
