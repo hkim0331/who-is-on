@@ -11,27 +11,28 @@ all:
 	@echo make create to create database and insert seeds
 	@echo make clean
 
-install:production
+install:
 	for i in update.sh update-async.sh who-is-*.rkt; do \
 		install -m 0755 $$i ${DEST}; \
 	done
+	make production
 	@echo please restart who-is-on
 
 production:
 	sed -i.bak \
 		-e "s|href='/user|href='/w/user|g" \
 		-e "s|action='/users|action='/w/users|" \
-		who-is-on-app.rkt
-	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" update.sh
-	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" update-async.sh
+		${DEST}/who-is-on-app.rkt
+	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update.sh
+	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update-async.sh
 
-development:
-	sed -i.bak \
-		-e "s|href='/w/user|href='/user|g" \
-		-e "s|action='/w/users|action='/users|" \
-		who-is-on-app.rkt
-	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
-	sed -i.bak -e 's|DIR=.*|DIR=.|' update-async.sh
+# development:
+# 	sed -i.bak \
+# 		-e "s|href='/w/user|href='/user|g" \
+# 		-e "s|action='/w/users|action='/users|" \
+# 		who-is-on-app.rkt
+# 	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
+# 	sed -i.bak -e 's|DIR=.*|DIR=.|' update-async.sh
 
 install-systemd:
 	cp who-is-on.service /lib/systemd/system/
