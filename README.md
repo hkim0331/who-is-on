@@ -51,12 +51,13 @@ who-is-on.service はその systemd ファイル。
 
 * [0.7.1] who-is-on-app asynchronous update.
 
-    なんだ、この uptime は？
+なんだ、この uptime は？Racket のバージョンの違いか？
 
 ```
 ubuntu@vm2019:/srv/who-is-on$ uptime
  13:10:01 up 6 days,  1:44,  2 users,  load average: 21.10, 15.35, 10.84
 ```
+
 * who-is-on-update.rb に --verbose オプション
 
 * when terminate who-is-on-app by ^C, visited end points will be echoed back.
@@ -175,7 +176,7 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 流行りは nginx のリバースプロキシだろう。
 
 
-__勉強になったか？__
+__M くん、勉強になったか？__
 
 
 ---
