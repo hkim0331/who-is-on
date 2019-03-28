@@ -12,25 +12,20 @@ all:
 	@echo make clean
 
 install:
-	make production
-	for i in update.sh who-is-*.rkt; do \
+	for i in update.sh update-async.sh who-is-*.rkt; do \
 		install -m 0755 $$i ${DEST}; \
 	done
-	@echo please restart who-is-on
+	make production
+	@echo please restart who-is-on by,
+	@echo sudo systemctl restart who-is-on
 
 production:
 	sed -i.bak \
 		-e "s|href='/user|href='/w/user|g" \
 		-e "s|action='/users|action='/w/users|" \
-		who-is-on-app.rkt
-	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" update.sh
-
-development:
-	sed -i.bak \
-		-e "s|href='/w/user|href='/user|g" \
-		-e "s|action='/w/users|action='/users|" \
-		who-is-on-app.rkt
-	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
+		${DEST}/who-is-on-app.rkt
+	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update.sh
+	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update-async.sh
 
 install-systemd:
 	cp who-is-on.service /lib/systemd/system/

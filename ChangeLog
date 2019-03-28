@@ -1,3 +1,17 @@
+2019-03-28  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.8
+	* who-is-on-app.rkt: define funtion 'now'
+	status? use the 'now' function
+
+	* Makefile (production): working tree で sed しない。
+	basic auth
+
+2019-03-25  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.7.1
+	who-is-on-app.rkt: asynchronous update.
+
 2019-03-23  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.7 who-is-on-app.rkt: status? を定義。

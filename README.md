@@ -6,12 +6,14 @@
 具体的には、
 WiFi機器（ケータイ電話を想定している）を持った誰がいつ LAN に接続したかを記録し、
 ウェブで表示する。
+who-is-on を実行する PC と ケータイなどの WiFi 機器が同一 LAN に接続していることを前提とする。
 
 * who-is-on-update.rkt は、ARP テーブルに見つかる MAC アドレスをデータベースに記録する。
 
 * who-is-on-app.rkt は指定したユーザの MAC アドレスが記録された日時を求めに応じて表示する。
 
-* update.sh は who-is-on-update.rkt を定期的に呼んだ後、update 自身を at で呼ぶ。
+* update.sh は who-is-on-update.rkt を呼んだ後、
+update.sh 自身の呼び出しをat でスケジュールする。
 
 ### requirement
 
@@ -22,7 +24,7 @@ WiFi機器（ケータイ電話を想定している）を持った誰がいつ 
 ```sh
 $ sudo apt install racket sqlite3
 ```
-* dmac/spin pkg
+* dmac/spin パッケージ
 
 ```sh
 $ raco pkg install https://github.com/dmac/spin.git
@@ -47,12 +49,19 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* なんだ、この uptime は？Racket のバージョンの違いか？
+
+```
+ubuntu@vm2019:/srv/who-is-on$ uptime
+ 13:10:01 up 6 days,  1:44,  2 users,  load average: 21.10, 15.35, 10.84
+```
+
 * who-is-on-update.rb に --verbose オプション
 
 * when terminate who-is-on-app by ^C, visited end points will be echoed back.
   useless. danger. how to stop it?
 
-* even if ping from tmint to tmint itself, tmint's mac-addr does not
+* even if tmint pings to tmint itself, tmint's mac-addr does not
   appear on arp table.
 
 ```sh
@@ -77,13 +86,19 @@ $
     at: cannot open lockfile /usr/lib/cron/jobs/.lockfile: Operation not permitted
 
 * nginx リバースプロキシーの設定方法
-  名前ベースの仮想ホストは C104 での運用には適当ではない。
-  パスベースでlocalhost:8000 へ振るんだが、
+
+    名前ベースの仮想ホストは C104 での運用には適当ではない。
+    パスベースでlocalhost:8000 へ振るんだが、
 
     * localhost の名前が使えないホストがある。
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
-### FIXED
+### FIXED/UPDATED
+
+* 0.8 別 LAN の hkimura 状況をプッシュ。
+
+* 0.7.2 nginx で basic auth
+  working tree の中で sed しない。
 
 * 0.7 /users/ のページに現在値を表示
 
@@ -164,7 +179,7 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 流行りは nginx のリバースプロキシだろう。
 
 
-__勉強になった？__
+__M くん、勉強になったか？__
 
 
 ---
