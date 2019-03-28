@@ -11,7 +11,7 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.7.1")
+(define VERSION "0.7.2")
 
 ;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
