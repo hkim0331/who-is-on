@@ -49,6 +49,8 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* [0.8] 別 LAN にいる hkimura の状況をチェック。できるか？
+
 * [0.7.1] who-is-on-app asynchronous update.
 
 なんだ、この uptime は？Racket のバージョンの違いか？
@@ -96,6 +98,9 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED
+
+* 0.7.2 nginx で basic auth
+  working tree の中で sed しない。
 
 * 0.7 /users/ のページに現在値を表示
 
