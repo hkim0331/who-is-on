@@ -26,14 +26,6 @@ production:
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update.sh
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update-async.sh
 
-# development:
-# 	sed -i.bak \
-# 		-e "s|href='/w/user|href='/user|g" \
-# 		-e "s|action='/w/users|action='/users|" \
-# 		who-is-on-app.rkt
-# 	sed -i.bak -e 's|DIR=.*|DIR=.|' update.sh
-# 	sed -i.bak -e 's|DIR=.*|DIR=.|' update-async.sh
-
 install-systemd:
 	cp who-is-on.service /lib/systemd/system/
 	systemctl daemon-reload

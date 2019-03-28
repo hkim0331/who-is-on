@@ -7,11 +7,12 @@
 ;;;        2019-03-17,
 ;;;        2019-03-23,
 ;;;        2019-03-25 asynchronous update
+;;;        2019-04-28 cancel 2019-03-25, define 'on'
 
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.7.2")
+(define VERSION "0.8")
 
 ;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
@@ -44,6 +45,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 </html>
 " VERSION))
 
+(define (now)
+  (string-split (query-value sql3 "select datetime('now','localtime')")))
+
 ;; use macro?
 (define (html contents . other)
   (format "~a~a~a"
@@ -51,15 +55,22 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (string-join (cons contents other))
     footer))
 
-;; FIXME: do not work yet
-;; asynchronous update
-(post "/un"
-      (lambda ()
-        (let* ((pwd (current-directory-for-user))
-               (cmd (format "/bin/sh ~aupdate-async.sh &" pwd)))
-          (if (system cmd)
-            "OK"
-            (format "FAIL: ~a" cmd)))))
+;; http -f http://localhost:8000/on name=hkimura pass=*****
+(post "/on"
+  (lambda (req)
+    (let ((pass (query-value sql3 "select pass from pass"))
+          (wifi (query-maybe-value
+                sql3
+                "select wifi from users where name=$1"
+                (params req 'name))))
+      (if (and (string=? pass (params req 'pass)) wifi)
+          (let* ((now (now)))
+            (query-exec
+             sql3
+             "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
+             wifi (first now) (second now))
+            "OK")
+          "NG"))))
 
 (get "/"
   (lambda ()
@@ -95,7 +106,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (ret (query-rows sql3 query (wifi name))))
     (if (null? ret)
         false
-        (let* ((now (string-split (query-value sql3 "select datetime('now','localtime')"))))
+        (let* ((now (now)))
           (and (string=? (first now) (vector-ref (first ret) 0))
                (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
 
