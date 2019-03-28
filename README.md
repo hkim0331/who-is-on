@@ -50,7 +50,8 @@ who-is-on.service はその systemd ファイル。
 
 * [0.7.1] who-is-on-app asynchronous update.
 
-なんだ、この uptime は？
+なんだ、この uptime は？Racket のバージョンの違い？
+
 ```
 ubuntu@vm2019:/srv/who-is-on$ uptime
  13:10:01 up 6 days,  1:44,  2 users,  load average: 21.10, 15.35, 10.84
