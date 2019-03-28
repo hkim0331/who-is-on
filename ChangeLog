@@ -1,7 +1,8 @@
 2019-03-28  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
-	* who-is-on-app.rkt: define funtion now
-	status? use the function
+	* 0.8
+	* who-is-on-app.rkt: define funtion 'now'
+	status? use the 'now' function
 
 	* Makefile (production): working tree で sed しない。
 	basic auth

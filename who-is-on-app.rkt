@@ -60,9 +60,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (lambda (req)
     (let ((pass (query-value sql3 "select pass from pass"))
           (wifi (query-maybe-value
-                sql3
-                "select wifi from users where name=$1"
-                (params req 'name))))
+                 sql3
+                 "select wifi from users where name=$1"
+                 (params req 'name))))
       (if (and (string=? pass (params req 'pass)) wifi)
           (let* ((now (now)))
             (query-exec
@@ -108,6 +108,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
         false
         (let* ((now (now)))
           (and (string=? (first now) (vector-ref (first ret) 0))
+               ;; too loose?
                (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
 
 (get "/users"
