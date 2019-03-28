@@ -11,7 +11,7 @@
 #lang racket
 (require db (planet dmac/spin))
 
-(define VERSION "0.7.1")
+(define VERSION "0.7.2")
 
 ;;FIXME should use WIO_DB?
 (define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
@@ -108,7 +108,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (for ([u (query-list sql3 "select name from users")])
            (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
                               (if (status? u) "red" "black")
-                              u u )))
+                              u u)))
          (displayln "</ul>")
          (displayln "<p><a href='/users/new'>add user ...</a></p>"))))))
 
