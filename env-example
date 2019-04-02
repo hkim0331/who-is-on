@@ -5,7 +5,7 @@ export WIO_ARP="/usr/sbin/arp"
 export WIO_PING="/sbin/ping"
 export WIO_RACKET="/usr/local/bin/racket"
 
-export WIO_DB="./who-is-on.sqlite3"
+export WIO_DB="$PWD/who-is-on.sqlite3"
 export WIO_SUBNET="192.168.0"
 
 export WIO_BASE=5

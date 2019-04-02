@@ -15,7 +15,7 @@
 (define VERSION "0.8")
 
 ;;FIXME should use WIO_DB?
-(define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
+(define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
 
 (define header
   "<!doctype html>
