@@ -4,7 +4,7 @@ Description = who-is-on server
 [Service]
 WorkingDirectory = /srv/who-is-on
 ExecStart = /usr/bin/racket who-is-on-app.rkt >/dev/null
-Restart = always
+#Restart = always
 TimeoutSec = 300
 Type = simple
 User = ubuntu
