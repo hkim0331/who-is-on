@@ -49,11 +49,7 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
-* [0.8] 別 LAN にいる hkimura の状況をチェック。できるか？
-
-* [0.7.1] who-is-on-app asynchronous update.
-
-なんだ、この uptime は？Racket のバージョンの違いか？
+* なんだ、この uptime は？Racket のバージョンの違いか？
 
 ```
 ubuntu@vm2019:/srv/who-is-on$ uptime
@@ -97,7 +93,9 @@ $
     * localhost の名前が使えないホストがある。
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
-### FIXED
+### FIXED/UPDATED
+
+* 0.8 別 LAN の hkimura 状況をプッシュ。
 
 * 0.7.2 nginx で basic auth
   working tree の中で sed しない。
