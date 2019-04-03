@@ -95,6 +95,8 @@ $
 
 ### FIXED/UPDATED
 
+* 0.9 /list で一覧表示。
+
 * 0.8 別 LAN の hkimura 状況をプッシュ。
 
 * 0.7.2 nginx で basic auth
