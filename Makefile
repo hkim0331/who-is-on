@@ -27,6 +27,7 @@ production:
 		${DEST}/who-is-on-app.rkt
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update.sh
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update-async.sh
+	cp VERSION ${DEST}/
 
 install-systemd:
 	cp who-is-on.service /lib/systemd/system/

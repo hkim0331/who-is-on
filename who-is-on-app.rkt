@@ -11,7 +11,7 @@
 ;;;        2019-04-03 for*/list
 #lang racket
 
-(define VERSION "0.9.2")
+(define VERSION "0.9.3")
 
 (require db (planet dmac/spin))
 
