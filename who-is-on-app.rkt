@@ -8,13 +8,16 @@
 ;;;        2019-03-23,
 ;;;        2019-03-25 asynchronous update
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
-
 #lang racket
-(require db (planet dmac/spin))
 
 (define VERSION "0.8")
 
+(require db (planet dmac/spin))
+
 (define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
+
+;; /list で表示すべきユーザの名前
+(define *users* '("hkimura" "miyakawa" "kawano" "tanaka"))
 
 (define header
   "<!doctype html>
@@ -85,10 +88,20 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (string-join-with sep strings)
   (string-join (interpose sep strings)))
 
-(define names '("hkimura" "miyakawa" "kawano" "tanaka"))
-(define (wifis names)
-  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) names))))
+(define (users-wifi)
+  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) *users*))))
     (query-list sql3 (format "select wifi from users where ~a" q))))
+
+(define (dates-all)
+  (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
+
+(define status (query-rows sql3 "select date,mac from mac_addrs group by mac"))
+(define (exists? date user rows)
+  (not (empty?
+        (filter (lambda (st)
+                  (and (string=? date (vector-ref st 0))
+                       (string=? user (vector-ref st 1))))
+                rows))))
 
 ;;; end points
 ;; http -f http://localhost:8000/on name=hkimura pass=*****
@@ -180,9 +193,30 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
+;;2019-04-03
+(get "/list"
+     (lambda (req)
+       (let ((users (users-wifi))
+             (dates (dates-all))
+             (status (query-rows sql3 "select date,mac from mac_addrs group by mac")))
+         (with-output-to-string
+           (lambda ()
+             (display "<table>")
+             (for ([d dates])
+               (display (format "<tr><td>~a</td>" d))
+               (for ([u users])
+                 (display (format "<td>~a</td>"
+                                  (if (exists? d u status)
+                                      "yes"
+                                      ""))))
+               (display "</tr>"))
+             (display "</table>")
+             ))
+         )))
+
 (displayln "start at 8000/tcp")
 ;; for listen-ip, read tcp-listen in racket manual.
 ;;debug
-;;(run #:listen-ip "127.0.0.1" #:port 8000)
+(run #:listen-ip "127.0.0.1" #:port 8000)
 
 
