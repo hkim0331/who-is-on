@@ -73,26 +73,40 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (let ((ret (string-split s ":")))
     (format "~a:~a" (first ret) (second ret))))
 
-;; (define (string-join-with sep strins)
-;;   (string-join (interpose sep string)))
+(define (interpose sep xs)
+  (define (I sep xs ret)
+    (if (null? xs)
+        ret
+        (I sep (cdr xs) (cons sep (cons (car xs) ret)))))
+  (if (null? xs)
+      '()
+      (reverse(cdr (I sep xs '())))))
+
+(define (string-join-with sep strings)
+  (string-join (interpose sep strings)))
+
+(define names '("hkimura" "miyakawa" "kawano" "tanaka"))
+(define (wifis names)
+  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) names))))
+    (query-list sql3 (format "select wifi from users where ~a" q))))
 
 ;;; end points
 ;; http -f http://localhost:8000/on name=hkimura pass=*****
 (post "/on"
-  (lambda (req)
-    (let ((pass (query-value sql3 "select pass from pass"))
-          (wifi (query-maybe-value
+      (lambda (req)
+        (let ((pass (query-value sql3 "select pass from pass"))
+              (wifi (query-maybe-value
+                     sql3
+                     "select wifi from users where name=$1"
+                     (params req 'name))))
+          (if (and (string=? pass (params req 'pass)) wifi)
+              (let* ((now (now)))
+                (query-exec
                  sql3
-                 "select wifi from users where name=$1"
-                 (params req 'name))))
-      (if (and (string=? pass (params req 'pass)) wifi)
-          (let* ((now (now)))
-            (query-exec
-             sql3
-             "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
-             wifi (first now) (second now))
-            "OK")
-          "NG"))))
+                 "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
+                 wifi (first now) (second now))
+                "OK")
+              "NG"))))
 
 (get "/"
   (lambda ()
