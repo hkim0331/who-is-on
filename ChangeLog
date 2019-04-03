@@ -1,5 +1,7 @@
 2019-04-03  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
+	* 0.9.5
+	あれ？0.9.4 飛ばしちゃったか？
 	* who-is-on-app.rkt: gregor 見つけた。sunday? saturday? 利用して
 	weekday? を定義。
 
