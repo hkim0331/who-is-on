@@ -23,6 +23,7 @@ production:
 	sed -i.bak \
 		-e "s|href='/user|href='/w/user|g" \
 		-e "s|action='/users|action='/w/users|" \
+		-e "s|href='/list|href='/w/list|" \
 		${DEST}/who-is-on-app.rkt
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update.sh
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update-async.sh

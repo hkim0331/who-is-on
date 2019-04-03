@@ -8,6 +8,7 @@
 ;;;        2019-03-23,
 ;;;        2019-03-25 asynchronous update
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
+;;;        2019-04-03 for*/list
 #lang racket
 
 (define VERSION "0.9")
@@ -15,9 +16,6 @@
 (require db (planet dmac/spin))
 
 (define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
-
-;; /list で表示すべきユーザの名前
-(define *users* '("hkimura" "miyakawa" "kawano" "tanaka"))
 
 (define header
   "<!doctype html>
@@ -46,6 +44,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 </body>
 </html>
 " VERSION))
+
+(define (users)
+  (let ((all (query-list sql3 "select name from users")))
+    (filter (lambda (s) (not (regexp-match #rx"^imac" s))) all)))
 
 (define (now)
   (string-split (query-value sql3 "select datetime('now','localtime')")))
@@ -89,20 +91,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (string-join (interpose sep strings)))
 
 (define (users-wifi)
-  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) *users*))))
+  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) (users)))))
     (query-list sql3 (format "select wifi from users where ~a" q))))
 
 (define (dates-all)
   (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
-
-;; no use
-;;(define status (query-rows sql3 "select date,mac from mac_addrs group by date"))
-;; (define (exists? date user rows)
-;;   (not (empty?
-;;         (filter (lambda (st)
-;;                   (and (string=? date (vector-ref st 0))
-;;                        (string=? user (vector-ref st 1))))
-;;                 rows))))
 
 (define (wifi->name wifi)
   (query-list sql3 "select name from users where wifi=$1" wifi))
@@ -163,7 +156,8 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                               (if (status? u) "red" "black")
                               u u)))
          (displayln "</ul>")
-         (displayln "<p><a href='/users/new'>add user ...</a></p>"))))))
+         (displayln
+          "<p>[ <a href='/list'>list</a> | <a href='/users/new'>add user</a> ]</p>"))))))
 
 (get "/user/:name/:date"
   (lambda (req)
@@ -223,13 +217,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                                          "○"
                                          "")))))
                 (display "</tr>"))
-              (display "</table>")
-              )))
-         )))
+              (display "</table>")))))))
 
 (displayln "start at 8000/tcp")
 ;; for listen-ip, read tcp-listen in racket manual.
-;;debug
 (run #:listen-ip "127.0.0.1" #:port 8000)
+
 
 
