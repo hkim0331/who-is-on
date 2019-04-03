@@ -1,5 +1,8 @@
 2019-04-03  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
+	* who-is-on-app.rkt: gregor 見つけた。sunday? saturday? 利用して
+	weekday? を定義。
+
 	* 0.9.3 vm2019 で git pull しても、新しくならない。どうして？
 	make install で VERSION をコピーするようにしよう。
 

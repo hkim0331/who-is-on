@@ -11,9 +11,9 @@
 ;;;        2019-04-03 for*/list
 #lang racket
 
-(define VERSION "0.9.3")
+(require db gregor (planet dmac/spin))
 
-(require db (planet dmac/spin))
+(define VERSION "0.9.3")
 
 (define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
 
@@ -52,6 +52,16 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (now)
   (string-split (query-value sql3 "select datetime('now','localtime')")))
 
+(define (dd-mm s)
+  (substring s 5 10))
+
+(define (weekday? s)
+  (let ((d (apply date (map string->number (string-split s "-")))))
+    (not (or (saturday? d) (sunday? d)))))
+
+(define (weekdays days)
+  (filter weekday? days))
+
 ;; use macro?
 (define (html contents . other)
   (format "~a~a~a"
@@ -59,11 +69,16 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (string-join (cons contents other))
     footer))
 
+;; replace with Redis?
 (define (status? name)
   (define (hh s)
     (string->number (first (string-split s ":"))))
-  (let* ((query "select date,time from mac_addrs where mac=$1 order by id desc limit 1")
-         (ret (query-rows sql3 query (wifi name))))
+  (let*
+      ((ret
+        (query-rows
+         sql3
+         "select date,time from mac_addrs where mac=$1 order by id desc limit 1"
+         (wifi name))))
     (if (null? ret)
         false
         (let* ((now (now)))
@@ -182,7 +197,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (lambda ()
             (let loop ((ret (map vector->list (query-rows sql3 "select date,time from  mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 order by date desc, time" name))))
               (unless (null? ret)
-                (display (format "<p><b>~a</b> " (first-date ret)))
+                (display (format "<p><b>~a</b> " (dd-mm (first-date ret))))
                 (display
                   (string-join
                     (map (lambda (x) (hh:mm (second x)))
@@ -195,7 +210,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (get "/list"
      (lambda (req)
        (let ((users (users-wifi))
-             (dates (dates-all))
+             (dates (weekdays (dates-all)))
              (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
          (html
           (with-output-to-string
@@ -210,7 +225,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                        (query-list
                         sql3
                         "select distinct(mac) from mac_addrs where date=$1" d)))
-                  (display (format "<tr><th>~a</th>" d))
+                  (display (format "<tr><th>~a</th>" (dd-mm d)))
                   (for ([u users])
                     (display (format "<td style='text-align:center;'>~a</td>"
                                      (if (member u st string=?)
