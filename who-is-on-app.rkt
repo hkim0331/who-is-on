@@ -13,7 +13,7 @@
 
 (require db gregor (planet dmac/spin))
 
-(define VERSION "0.9.3")
+(define VERSION "0.9.5")
 
 (define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
 
