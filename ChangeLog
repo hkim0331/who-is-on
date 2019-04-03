@@ -1,4 +1,7 @@
 2019-04-03  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.9.1 update Makefile, who-is-on-app.rkt
+	* グローバル変数 *users* の除去
 	* 0.9 /list
 	* who-is-on-app.rkt: wifis, dates-all.
 
