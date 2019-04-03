@@ -10,7 +10,7 @@
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 #lang racket
 
-(define VERSION "0.8")
+(define VERSION "0.9")
 
 (require db (planet dmac/spin))
 
