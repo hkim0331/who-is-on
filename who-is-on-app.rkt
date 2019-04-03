@@ -7,15 +7,15 @@
 ;;;        2019-03-17,
 ;;;        2019-03-23,
 ;;;        2019-03-25 asynchronous update
-;;;        2019-04-28 cancel 2019-03-25, define 'on'
-
+;;;        2019-03-28 cancel 2019-03-25, define 'on'
+;;;        2019-04-03 for*/list
 #lang racket
+
+(define VERSION "0.9")
+
 (require db (planet dmac/spin))
 
-(define VERSION "0.8")
-
-;;FIXME should use WIO_DB?
-(define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
+(define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
 
 (define header
   "<!doctype html>
@@ -45,6 +45,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 </html>
 " VERSION))
 
+(define (users)
+  (let ((all (query-list sql3 "select name from users")))
+    (filter (lambda (s) (not (regexp-match #rx"^imac" s))) all)))
+
 (define (now)
   (string-split (query-value sql3 "select datetime('now','localtime')")))
 
@@ -55,22 +59,64 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (string-join (cons contents other))
     footer))
 
+(define (status? name)
+  (define (hh s)
+    (string->number (first (string-split s ":"))))
+  (let* ((query "select date,time from mac_addrs where mac=$1 order by id desc limit 1")
+         (ret (query-rows sql3 query (wifi name))))
+    (if (null? ret)
+        false
+        (let* ((now (now)))
+          (and (string=? (first now) (vector-ref (first ret) 0))
+               ;; too loose?
+               (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
+
+(define (wifi name)
+  (query-value sql3 "select wifi from users where name=$1" name))
+
+(define (hh:mm s)
+  (let ((ret (string-split s ":")))
+    (format "~a:~a" (first ret) (second ret))))
+
+(define (interpose sep xs)
+  (define (I sep xs ret)
+    (if (null? xs)
+        ret
+        (I sep (cdr xs) (cons sep (cons (car xs) ret)))))
+  (if (null? xs)
+      '()
+      (reverse(cdr (I sep xs '())))))
+
+(define (string-join-with sep strings)
+  (string-join (interpose sep strings)))
+
+(define (users-wifi)
+  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) (users)))))
+    (query-list sql3 (format "select wifi from users where ~a" q))))
+
+(define (dates-all)
+  (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
+
+(define (wifi->name wifi)
+  (query-list sql3 "select name from users where wifi=$1" wifi))
+
+;;; end points
 ;; http -f http://localhost:8000/on name=hkimura pass=*****
 (post "/on"
-  (lambda (req)
-    (let ((pass (query-value sql3 "select pass from pass"))
-          (wifi (query-maybe-value
+      (lambda (req)
+        (let ((pass (query-value sql3 "select pass from pass"))
+              (wifi (query-maybe-value
+                     sql3
+                     "select wifi from users where name=$1"
+                     (params req 'name))))
+          (if (and (string=? pass (params req 'pass)) wifi)
+              (let* ((now (now)))
+                (query-exec
                  sql3
-                 "select wifi from users where name=$1"
-                 (params req 'name))))
-      (if (and (string=? pass (params req 'pass)) wifi)
-          (let* ((now (now)))
-            (query-exec
-             sql3
-             "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
-             wifi (first now) (second now))
-            "OK")
-          "NG"))))
+                 "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
+                 wifi (first now) (second now))
+                "OK")
+              "NG"))))
 
 (get "/"
   (lambda ()
@@ -99,18 +145,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
 
-(define (status? name)
-  (define (hh s)
-    (string->number (first (string-split s ":"))))
-  (let* ((query "select date,time from mac_addrs where mac=$1 order by id desc limit 1")
-         (ret (query-rows sql3 query (wifi name))))
-    (if (null? ret)
-        false
-        (let* ((now (now)))
-          (and (string=? (first now) (vector-ref (first ret) 0))
-               ;; too loose?
-               (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
-
 (get "/users"
   (lambda (req)
     (html
@@ -122,15 +156,8 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                               (if (status? u) "red" "black")
                               u u)))
          (displayln "</ul>")
-         (displayln "<p><a href='/users/new'>add user ...</a></p>"))))))
-
-
-(define (wifi name)
-  (query-value sql3 "select wifi from users where name=$1" name))
-
-(define (hh:mm s)
-  (let ((ret (string-split s ":")))
-    (format "~a:~a" (first ret) (second ret))))
+         (displayln
+          "<p>[ <a href='/list'>list</a> | <a href='/users/new'>add user</a> ]</p>"))))))
 
 (get "/user/:name/:date"
   (lambda (req)
@@ -164,6 +191,37 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
+;;2019-04-03
+(get "/list"
+     (lambda (req)
+       (let ((users (users-wifi))
+             (dates (dates-all))
+             (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
+         (html
+          (with-output-to-string
+            (lambda ()
+              (display "<table>")
+              (display "<tr><th></th>")
+              (for ([u users])
+                (display (format "<td>~a</td>" (wifi->name u))))
+              (display "</tr>")
+              (for ([d dates])
+                (let ((st
+                       (query-list
+                        sql3
+                        "select distinct(mac) from mac_addrs where date=$1" d)))
+                  (display (format "<tr><th>~a</th>" d))
+                  (for ([u users])
+                    (display (format "<td style='text-align:center;'>~a</td>"
+                                     (if (member u st string=?)
+                                         "○"
+                                         "")))))
+                (display "</tr>"))
+              (display "</table>")))))))
+
 (displayln "start at 8000/tcp")
 ;; for listen-ip, read tcp-listen in racket manual.
 (run #:listen-ip "127.0.0.1" #:port 8000)
+
+
+
