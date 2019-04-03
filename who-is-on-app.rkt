@@ -95,13 +95,17 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (dates-all)
   (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
 
-(define status (query-rows sql3 "select date,mac from mac_addrs group by mac"))
-(define (exists? date user rows)
-  (not (empty?
-        (filter (lambda (st)
-                  (and (string=? date (vector-ref st 0))
-                       (string=? user (vector-ref st 1))))
-                rows))))
+;; no use
+;;(define status (query-rows sql3 "select date,mac from mac_addrs group by date"))
+;; (define (exists? date user rows)
+;;   (not (empty?
+;;         (filter (lambda (st)
+;;                   (and (string=? date (vector-ref st 0))
+;;                        (string=? user (vector-ref st 1))))
+;;                 rows))))
+
+(define (wifi->name wifi)
+  (query-list sql3 "select name from users where wifi=$1" wifi))
 
 ;;; end points
 ;; http -f http://localhost:8000/on name=hkimura pass=*****
@@ -198,20 +202,29 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      (lambda (req)
        (let ((users (users-wifi))
              (dates (dates-all))
-             (status (query-rows sql3 "select date,mac from mac_addrs group by mac")))
-         (with-output-to-string
-           (lambda ()
-             (display "<table>")
-             (for ([d dates])
-               (display (format "<tr><td>~a</td>" d))
-               (for ([u users])
-                 (display (format "<td>~a</td>"
-                                  (if (exists? d u status)
-                                      "yes"
-                                      ""))))
-               (display "</tr>"))
-             (display "</table>")
-             ))
+             (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
+         (html
+          (with-output-to-string
+            (lambda ()
+              (display "<table>")
+              (display "<tr><th></th>")
+              (for ([u users])
+                (display (format "<td>~a</td>" (wifi->name u))))
+              (display "</tr>")
+              (for ([d dates])
+                (let ((st
+                       (query-list
+                        sql3
+                        "select distinct(mac) from mac_addrs where date=$1" d)))
+                  (display (format "<tr><th>~a</th>" d))
+                  (for ([u users])
+                    (display (format "<td style='text-align:center;'>~a</td>"
+                                     (if (member u st string=?)
+                                         "○"
+                                         "")))))
+                (display "</tr>"))
+              (display "</table>")
+              )))
          )))
 
 (displayln "start at 8000/tcp")
