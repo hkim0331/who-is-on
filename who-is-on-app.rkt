@@ -7,15 +7,14 @@
 ;;;        2019-03-17,
 ;;;        2019-03-23,
 ;;;        2019-03-25 asynchronous update
-;;;        2019-04-28 cancel 2019-03-25, define 'on'
+;;;        2019-03-28 cancel 2019-03-25, define 'on'
 
 #lang racket
 (require db (planet dmac/spin))
 
 (define VERSION "0.8")
 
-;;FIXME should use WIO_DB?
-(define sql3 (sqlite3-connect #:database "who-is-on.sqlite3"))
+(define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
 
 (define header
   "<!doctype html>
@@ -55,6 +54,29 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (string-join (cons contents other))
     footer))
 
+(define (status? name)
+  (define (hh s)
+    (string->number (first (string-split s ":"))))
+  (let* ((query "select date,time from mac_addrs where mac=$1 order by id desc limit 1")
+         (ret (query-rows sql3 query (wifi name))))
+    (if (null? ret)
+        false
+        (let* ((now (now)))
+          (and (string=? (first now) (vector-ref (first ret) 0))
+               ;; too loose?
+               (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
+
+(define (wifi name)
+  (query-value sql3 "select wifi from users where name=$1" name))
+
+(define (hh:mm s)
+  (let ((ret (string-split s ":")))
+    (format "~a:~a" (first ret) (second ret))))
+
+;; (define (string-join-with sep strins)
+;;   (string-join (interpose sep string)))
+
+;;; end points
 ;; http -f http://localhost:8000/on name=hkimura pass=*****
 (post "/on"
   (lambda (req)
@@ -99,18 +121,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
 
-(define (status? name)
-  (define (hh s)
-    (string->number (first (string-split s ":"))))
-  (let* ((query "select date,time from mac_addrs where mac=$1 order by id desc limit 1")
-         (ret (query-rows sql3 query (wifi name))))
-    (if (null? ret)
-        false
-        (let* ((now (now)))
-          (and (string=? (first now) (vector-ref (first ret) 0))
-               ;; too loose?
-               (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
-
 (get "/users"
   (lambda (req)
     (html
@@ -123,14 +133,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                               u u)))
          (displayln "</ul>")
          (displayln "<p><a href='/users/new'>add user ...</a></p>"))))))
-
-
-(define (wifi name)
-  (query-value sql3 "select wifi from users where name=$1" name))
-
-(define (hh:mm s)
-  (let ((ret (string-split s ":")))
-    (format "~a:~a" (first ret) (second ret))))
 
 (get "/user/:name/:date"
   (lambda (req)
@@ -166,4 +168,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 
 (displayln "start at 8000/tcp")
 ;; for listen-ip, read tcp-listen in racket manual.
-(run #:listen-ip "127.0.0.1" #:port 8000)
+;;debug
+;;(run #:listen-ip "127.0.0.1" #:port 8000)
+
+
