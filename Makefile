@@ -16,7 +16,7 @@ install:
 		install -m 0755 $$i ${DEST}; \
 	done
 	make production
-	@echo please restart who-is-on by,
+	@echo please restart who-is-on by
 	@echo sudo systemctl restart who-is-on
 
 production:

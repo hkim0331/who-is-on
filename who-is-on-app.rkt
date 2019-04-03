@@ -1,6 +1,8 @@
 #!/usr/bin/env racket
+#lang racket
+;;;
 ;;; WiFi で出場状況チェック by hkimura
-;;; make install will rewrite this file. end points.
+;;; make install will rewrite this file suitable for production
 ;;;
 ;;; update 2019-03-13,
 ;;;        2019-03-14,
@@ -9,8 +11,7 @@
 ;;;        2019-03-25 asynchronous update
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 ;;;        2019-04-03 for*/list
-#lang racket
-
+;;;
 (require db gregor (planet dmac/spin))
 
 (define VERSION "0.9.5")
@@ -116,7 +117,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (query-list sql3 "select name from users where wifi=$1" wifi))
 
 ;;; end points
-;; http -f http://localhost:8000/on name=hkimura pass=*****
+;; http -f http://localhost:8000/on name=***** pass=*****
 (post "/on"
       (lambda (req)
         (let ((pass (query-value sql3 "select pass from pass"))
@@ -229,14 +230,13 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                   (for ([u users])
                     (display (format "<td style='text-align:center;'>~a</td>"
                                      (if (member u st string=?)
-                                         "○"
+                                         "😀"
                                          "")))))
                 (display "</tr>"))
               (display "</table>")))))))
 
+;;
+;; start server
+;;
 (displayln "start at 8000/tcp")
-;; for listen-ip, read tcp-listen in racket manual.
 (run #:listen-ip "127.0.0.1" #:port 8000)
-
-
-
