@@ -11,6 +11,7 @@
 ;;;        2019-03-25 asynchronous update
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 ;;;        2019-04-03 for*/list
+;;;        2019-04-09 merge miyakawa's weekday.rkt
 ;;;
 (require db (planet dmac/spin) "weekday.rkt")
 
