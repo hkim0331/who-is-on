@@ -12,10 +12,10 @@
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 ;;;        2019-04-03 for*/list
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
-;;;
+
 (require db (planet dmac/spin) "weekday.rkt")
 
-(define VERSION "0.10")
+(define VERSION "0.10.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 

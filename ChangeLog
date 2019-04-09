@@ -1,4 +1,8 @@
 2019-04-09  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.10.1
+	* Makefile: install weekday.rkt
+	
 	* 0.10
 	* weekday.rkt: merged.
 
