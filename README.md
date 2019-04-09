@@ -1,4 +1,4 @@
-# who is on?
+# Who is on?
 
 プログラミングの勉強をもう一年したい学生のための春休みお手本プロジェクト。
 
@@ -14,6 +14,22 @@ who-is-on を実行する PC と ケータイなどの WiFi 機器が同一 LAN 
 
 * update.sh は who-is-on-update.rkt を呼んだ後、
 update.sh 自身の呼び出しをat でスケジュールする。
+
+### description
+
+* 現在、研究室に来ているユーザ、電源が入っている PC を 
+<span style='color:red;'>●</span>(赤丸)
+で表示。
+
+    ![現在状況](images/current.png)
+
+* 研究室メンバーの過去の出席状況一覧。
+
+    ![一覧](images/members.png)
+
+* 数時間ごとの各メンバーの記録。
+
+    ![詳細](images/personal.png)
 
 ### requirement
 
@@ -94,6 +110,8 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED/UPDATED
+
+* 0.9 /list で一覧表示。
 
 * 0.8 別 LAN の hkimura 状況をプッシュ。
 

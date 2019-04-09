@@ -1,14 +1,14 @@
 [Unit]
-Description = who-is-on server
+Description=who-is-on server
 
 [Service]
-WorkingDirectory = /srv/who-is-on
-ExecStart = /usr/bin/racket who-is-on-app.rkt >/dev/null
-Restart = always
-TimeoutSec = 300
-Type = simple
-User = ubuntu
-EnvironmentFile=/srv/who-is-on/.env
+Type=simple
+User=ubuntu
+Restart=no
+TimeoutSec=300
+EnvironmentFile=/home/hkim/workspace/who-is-on/.env
+WorkingDirectory=/home/hkim/workspace/who-is-on
+ExecStart=/usr/bin/racket who-is-on-app.rkt > who-is-on.log
 
 [Install]
-WantedBy = multi-user.target
+WantedBy=multi-user.target
