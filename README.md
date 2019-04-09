@@ -1,4 +1,4 @@
-# who is on?
+# Who is on?
 
 プログラミングの勉強をもう一年したい学生のための春休みお手本プロジェクト。
 
@@ -17,19 +17,19 @@ update.sh 自身の呼び出しをat でスケジュールする。
 
 ### description
 
-* 現在、研究室に来ているユーザ、電源が入っている PC は 
-<span style='color:red;'>●</span>
+* 現在、研究室に来ているユーザ、電源が入っている PC を 
+<span style='color:red;'>●</span>(赤丸)
 で表示、
 
     ![](images/current.png)
 
-* ユーザごとの過去の出席状況を詳しく、
-
-    ![](images/personal.png)
-
-* 研究室メンバーの出欠一覧
+* 研究室メンバーの過去の出席状況と、
 
     ![](images/members.png)
+
+* ユーザごとの数時間ごとの記録が確認できる。
+
+    ![](images/personal.png)
 
 ### requirement
 
