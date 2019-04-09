@@ -12,13 +12,13 @@
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 ;;;        2019-04-03 for*/list
 ;;;
-(require db gregor (planet dmac/spin))
+(require db (planet dmac/spin) "weekday.rkt")
 
 (define VERSION "0.9.5")
 
-(display (format "WIO_DB: ~a" (getenv "WIO_DB")))
+;(display (format "WIO_DB: ~a" (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
-(define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
+(define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
 (define header
   "<!doctype html>
@@ -58,9 +58,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (dd-mm s)
   (substring s 5 10))
 
-(define (weekday? s)
-  (let ((d (apply date (map string->number (string-split s "-")))))
-    (not (or (saturday? d) (sunday? d)))))
+;(define (weekday? s)
+;  (let ((d (apply date (map string->number (string-split s "-")))))
+;    (not (or (saturday? d) (sunday? d)))))
 
 (define (weekdays days)
   (filter weekday? days))
