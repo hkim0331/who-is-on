@@ -15,6 +15,22 @@ who-is-on を実行する PC と ケータイなどの WiFi 機器が同一 LAN 
 * update.sh は who-is-on-update.rkt を呼んだ後、
 update.sh 自身の呼び出しをat でスケジュールする。
 
+### description
+
+* 現在、研究室に来ているユーザ、電源が入っている PC は 
+<span style='color:red;'>●</span>
+で表示、
+
+    ![](images/current.png)
+
+* ユーザごとの過去の出席状況を詳しく、
+
+    ![](images/personal.png)
+
+* 研究室メンバーの出欠一覧
+
+    ![](images/members.png)
+
 ### requirement
 
 開発は macos, linuxmint 19.
