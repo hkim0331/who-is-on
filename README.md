@@ -19,15 +19,15 @@ update.sh 自身の呼び出しをat でスケジュールする。
 
 * 現在、研究室に来ているユーザ、電源が入っている PC を 
 <span style='color:red;'>●</span>(赤丸)
-で表示、
+で表示。
 
     ![](images/current.png)
 
-* 研究室メンバーの過去の出席状況と、
+* 研究室メンバーの過去の出席状況一覧。
 
     ![](images/members.png)
 
-* ユーザごとの数時間ごとの記録が確認できる。
+* 数時間ごとの各メンバーの記録。
 
     ![](images/personal.png)
 
