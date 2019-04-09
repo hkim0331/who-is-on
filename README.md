@@ -21,15 +21,15 @@ update.sh 自身の呼び出しをat でスケジュールする。
 <span style='color:red;'>●</span>(赤丸)
 で表示。
 
-    ![](images/current.png)
+    ![現在状況](images/current.png)
 
 * 研究室メンバーの過去の出席状況一覧。
 
-    ![](images/members.png)
+    ![一覧](images/members.png)
 
 * 数時間ごとの各メンバーの記録。
 
-    ![](images/personal.png)
+    ![詳細](images/personal.png)
 
 ### requirement
 
