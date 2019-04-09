@@ -16,6 +16,8 @@
 
 (define VERSION "0.9.5")
 
+(display (format "WIO_DB: ~a" (getenv "WIO_DB")))
+
 (define sql3 (sqlite3-connect #:database (getenv "WIO_DB")))
 
 (define header
