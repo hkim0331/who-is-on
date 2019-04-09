@@ -11,7 +11,7 @@
 (define *db* (or (getenv "WIO_DB") "./who-is-on.sqlite3"))
 (define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
 (define *ping* (or (getenv "WIO_PING") "/bin/ping"))
-(define *subnet* (or (getenv "WIO_SUBNET") "10.0.34"))
+(define *subnet* (or (getenv "WIO_SUBNET") "192.168.0"))
 
 ;; (define *verbose* false)
 ;; (let ((args (current-command-line-arguments)))
@@ -34,14 +34,13 @@
 (define (arp)
   (exec (format "~a -an" *arp*)))
 
-(define (broadcast)
-  (define (bc net from to)
-    (map thread-wait
-         (for/list ([i (range from to)])
-           (let ((cmdline (format "~a -c 2 -t 2 ~a.~a" *ping* net i)))
-             (thread (thunk (exec* cmdline))))))
+
+(define (multi-ping subnet from to)
+  (map thread-wait
+    (for/list ([i (range from to)])
+      (let ((cmdline (format "~a -c 2 -t 2 ~a.~a" *ping* subnet i)))
+        (thread (thunk (exec* cmdline))))))
     #t)
-  (bc *subnet* 1 254))
 
 (define (pad mac)
   (define (pad0 s)
@@ -61,4 +60,4 @@
     (displayln " success")
     (disconnect sql3)))
 
-(and (broadcast) (sleep 2) (who-is-on))
+(and (multi-ping *subnet* 10 100) (sleep 2) (who-is-on))
