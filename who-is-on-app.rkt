@@ -15,7 +15,7 @@
 ;;;
 (require db (planet dmac/spin) "weekday.rkt")
 
-(define VERSION "0.9.5")
+(define VERSION "0.10")
 
 ;(display (format "WIO_DB: ~a" (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
