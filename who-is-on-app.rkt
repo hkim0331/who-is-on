@@ -15,7 +15,7 @@
 
 (require db (planet dmac/spin) "weekday.rkt")
 
-(define VERSION "0.11")
+(define VERSION "0.12")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -158,8 +158,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (lambda (req)
     (query-exec
       sql3
-      "insert into users (name, wifi) values ($1, $2)"
+      "insert into users (name, jname, wifi) values ($1, $2, $3)"
       (params req 'name)
+      (params req 'jname)
       (params req 'wifi))
     (html "<p>OK.</p>")))
 
@@ -171,6 +172,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (displayln "<form method='post' action='/users/create'>")
           (displayln "<table>")
           (displayln "<tr><th>name</th><td><input name='name'></td></tr>")
+          (displayln "<tr><th>日本名</th><td><input name='jname'></td></tr>")
           (displayln "<tr><th>wifi</th><td><input name='wifi'></td></tr>")
           (displayln "</table>")
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
