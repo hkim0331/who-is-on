@@ -15,7 +15,7 @@
 
 (require db (planet dmac/spin) "weekday.rkt")
 
-(define VERSION "0.11")
+(define VERSION "0.12")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -115,9 +115,23 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
 
 (define (wifi->name wifi)
-  (query-list sql3 "select name from users where wifi=$1" wifi))
+  (first (query-list sql3 "select name from users where wifi=$1" wifi)))
 
+(define *name-jname*
+  (query-rows sql3 "select name,jname from users"))
+
+;; continuation!
+(define (j name)
+  (call/cc
+   (lambda (return)
+     (for ([pair *name-jname*])
+       (when (string=? name (vector-ref pair 0))
+         (return (vector-ref pair 1)))))))
+
+;;;
 ;;; end points
+;;;
+
 ;; http -f http://localhost:8000/on name=***** pass=*****
 (post "/on"
       (lambda (req)
@@ -144,8 +158,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (lambda (req)
     (query-exec
       sql3
-      "insert into users (name, wifi) values ($1, $2)"
+      "insert into users (name, jname, wifi) values ($1, $2, $3)"
       (params req 'name)
+      (params req 'jname)
       (params req 'wifi))
     (html "<p>OK.</p>")))
 
@@ -157,11 +172,12 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (displayln "<form method='post' action='/users/create'>")
           (displayln "<table>")
           (displayln "<tr><th>name</th><td><input name='name'></td></tr>")
+          (displayln "<tr><th>日本名</th><td><input name='jname'></td></tr>")
           (displayln "<tr><th>wifi</th><td><input name='wifi'></td></tr>")
           (displayln "</table>")
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
-
+;jname
 (get "/users"
   (lambda (req)
     (html
@@ -171,7 +187,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (for ([u (query-list sql3 "select name from users")])
            (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
                               (if (status? u) "red" "black")
-                              u u)))
+                              u (j u))))
          (displayln "</ul>")
          (displayln
           "<p>[ <a href='/list'>list</a> | <a href='/users/new'>add user</a> ]</p>"))))))
@@ -208,7 +224,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
-;;2019-04-03
+;;2019-04-10, j
 (get "/list"
      (lambda (req)
        (let ((users (users-wifi))
@@ -220,7 +236,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
               (display "<table>")
               (display "<tr><th></th>")
               (for ([u users])
-                (display (format "<td>~a</td>" (wifi->name u))))
+                (display (format "<td> ~a, </td>" (j (wifi->name u)))))
               (display "</tr>")
               (for ([d dates])
                 (let ((st

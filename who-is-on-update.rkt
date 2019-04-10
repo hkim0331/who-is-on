@@ -1,10 +1,10 @@
 #!/usr/bin/env racket
+#lang racket
 ;;; hkimura, 2019-03-05.
 ;;; update 2019-03-12,
 ;;;        2019-03-13,
 ;;;        2019-03-14,
-
-#lang racket
+;;;        2019-04-09, debug, tanaka and kawano are not checked.
 
 (require db)
 
@@ -12,11 +12,6 @@
 (define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
 (define *ping* (or (getenv "WIO_PING") "/bin/ping"))
 (define *subnet* (or (getenv "WIO_SUBNET") "192.168.0"))
-
-;; (define *verbose* false)
-;; (let ((args (current-command-line-arguments)))
-;;   (when (string=? "--verbose" (vector-ref args 0))
-;;     (set! *verbose* true)))
 
 (define (exec cmdline)
     (let* ((proc (apply process* (string-split cmdline)))
@@ -31,9 +26,9 @@
 (define (exec* cmdline)
   (apply process* (string-split cmdline)))
 
+;; no pipe
 (define (arp)
   (exec (format "~a -an" *arp*)))
-
 
 (define (multi-ping subnet from to)
   (map thread-wait
@@ -53,8 +48,11 @@
 ;; query-exec inside for can be joined as one.
 (define (who-is-on)
   (let ((sql3 (sqlite3-connect #:database *db*)))
+;;    (displayln (arp));; (arp) is nil! no pipe.
     (for ([mac (map (lambda (s) (fourth (string-split s))) (arp))])
+;;      (displayln (format "mac: ~a" mac))
       (unless (regexp-match #rx"incomplete" mac)
+;;        (displayln (format "insert ~a" (pad mac)))
         (query-exec sql3 "insert into mac_addrs (mac) values ($1)" (pad mac))))
     (display (query-value sql3 "select datetime('now', 'localtime')"))
     (displayln " success")
