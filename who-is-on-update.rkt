@@ -63,4 +63,4 @@
     (displayln " success")
     (disconnect sql3)))
 
-(and (multi-ping *subnet* 10 100) (sleep 2) (who-is-on))
+(and (multi-ping *subnet* 10 99) (sleep 2) (who-is-on))
