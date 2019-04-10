@@ -5,6 +5,7 @@
 	* update (get "/list")
 	* update (get "/users")
 	* get/post users に jname 分追加
+	* only-people: users から変更。関数の内容を表す名前に。
 
 2019-04-09  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
