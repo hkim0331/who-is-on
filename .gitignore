@@ -1,4 +1,4 @@
-!create.sql
+!*.sql
 .env
 update.log
 who-is-on.sqlite3
