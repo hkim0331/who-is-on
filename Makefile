@@ -11,6 +11,11 @@ all:
 	@echo make create to create database and insert seeds
 	@echo make clean
 
+# migration
+jname:
+	sqlite3 ${DB} < migration/jname-add.sql
+	racket migration/jname-insert.rkt
+
 install:
 	for i in update.sh update-async.sh who-is-*.rkt weekday.rkt; do \
 		install -m 0755 $$i ${DEST}; \

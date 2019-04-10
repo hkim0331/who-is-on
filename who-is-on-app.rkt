@@ -117,7 +117,14 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (wifi->name wifi)
   (query-list sql3 "select name from users where wifi=$1" wifi))
 
+;; 2019-04-10
+(define (wifi->jname wifi)
+  (query-list sql3 "select jname from users where wifi=$1" wifi))
+
+;;;
 ;;; end points
+;;;
+
 ;; http -f http://localhost:8000/on name=***** pass=*****
 (post "/on"
       (lambda (req)
@@ -168,7 +175,8 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      (with-output-to-string
        (lambda ()
          (displayln "<ul>")
-         (for ([u (query-list sql3 "select name from users")])
+         ;; 2019-04-10
+         (for ([u (query-list sql3 "select jname from users")])
            (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
                               (if (status? u) "red" "black")
                               u u)))
@@ -208,7 +216,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
-;;2019-04-03
+;;2019-04-10, jname
 (get "/list"
      (lambda (req)
        (let ((users (users-wifi))
@@ -220,7 +228,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
               (display "<table>")
               (display "<tr><th></th>")
               (for ([u users])
-                (display (format "<td>~a</td>" (wifi->name u))))
+                (display (format "<td>~a</td>" (wifi->jname u))))
               (display "</tr>")
               (for ([d dates])
                 (let ((st
