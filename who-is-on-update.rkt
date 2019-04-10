@@ -8,6 +8,12 @@
 
 (require db)
 
+(define *debug* #f)
+
+(define (debug s)
+  (when *debug*
+    (displayln s)))
+
 (define *db* (or (getenv "WIO_DB") "./who-is-on.sqlite3"))
 (define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
 (define *ping* (or (getenv "WIO_PING") "/bin/ping"))
@@ -48,14 +54,13 @@
 ;; query-exec inside for can be joined as one.
 (define (who-is-on)
   (let ((sql3 (sqlite3-connect #:database *db*)))
-;;    (displayln (arp));; (arp) is nil! no pipe.
     (for ([mac (map (lambda (s) (fourth (string-split s))) (arp))])
-;;      (displayln (format "mac: ~a" mac))
       (unless (regexp-match #rx"incomplete" mac)
-;;        (displayln (format "insert ~a" (pad mac)))
-        (query-exec sql3 "insert into mac_addrs (mac) values ($1)" (pad mac))))
+        (let ((pmac (pad mac)))
+          (debug (format "found: ~a" pmac))
+          (query-exec sql3 "insert into mac_addrs (mac) values ($1)" pmac))))
     (display (query-value sql3 "select datetime('now', 'localtime')"))
     (displayln " success")
     (disconnect sql3)))
 
-(and (multi-ping *subnet* 10 100) (sleep 2) (who-is-on))
+(and (multi-ping *subnet* 10 99) (sleep 2) (who-is-on))

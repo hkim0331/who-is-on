@@ -12,10 +12,11 @@
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 ;;;        2019-04-03 for*/list
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
+;;;        2019-04-10 japase name, display order
 
 (require db (planet dmac/spin) "weekday.rkt")
 
-(define VERSION "0.12")
+(define VERSION "0.13.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -48,8 +49,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 " VERSION))
 
 (define (users)
-  (let ((all (query-list sql3 "select name from users")))
-    (filter (lambda (s) (not (regexp-match #rx"^imac" s))) all)))
+  (query-list sql3 "select name from users order by cat desc,name"))
+
+(define (only-people)
+  (filter (lambda (s) (not (regexp-match #rx"^imac" s))) (users)))
 
 (define (now)
   (string-split (query-value sql3 "select datetime('now','localtime')")))
@@ -107,9 +110,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (string-join-with sep strings)
   (string-join (interpose sep strings)))
 
+;;FIXME, not DRY
 (define (users-wifi)
-  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) (users)))))
-    (query-list sql3 (format "select wifi from users where ~a" q))))
+  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) (only-people)))))
+    (query-list sql3 (format "select wifi from users where ~a order by cat desc, name" q))))
 
 (define (dates-all)
   (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
@@ -185,7 +189,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      (with-output-to-string
        (lambda ()
          (displayln "<ul>")
-         (for ([u (query-list sql3 "select name from users")])
+         ;;
+         ;; (for ([u (query-list sql3 "select name from users")])
+         (for ([u (users)])
            (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
                               (if (status? u) "red" "black")
                               u (j u))))
@@ -253,6 +259,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</tr>"))
               (display "</table>")))))))
 
+(get "/info"
+  (lambda (req)
+    (html
+      (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
 ;;
 ;; start server
 ;;
