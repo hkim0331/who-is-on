@@ -8,16 +8,23 @@
 
 (require db)
 
-(define *debug* #f)
+(define *debug* (getenv "WIO_DEBUG"))
+;;(displayln (format "WIO_DEBUG: ~a" (getenv "WIO_DEBUG")))
+(define *db* (or (getenv "WIO_DB") "./who-is-on.sqlite3"))
+(define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
+(define *ping* (or (getenv "WIO_PING") "/bin/ping"))
+(define *subnet* (or (getenv "WIO_SUBNET") "192.168.0"))
+
+(when *debug*
+  (displayln (format "*db* ~a" *db*))
+  (displayln (format "*arp* ~a" *arp*))
+  (displayln (format "*ping* ~a" *ping*))
+  (displayln (format "*subnet* ~a" *subnet*)))
 
 (define (debug s)
   (when *debug*
     (displayln s)))
 
-(define *db* (or (getenv "WIO_DB") "./who-is-on.sqlite3"))
-(define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
-(define *ping* (or (getenv "WIO_PING") "/bin/ping"))
-(define *subnet* (or (getenv "WIO_SUBNET") "192.168.0"))
 
 (define (exec cmdline)
     (let* ((proc (apply process* (string-split cmdline)))
@@ -40,6 +47,8 @@
   (map thread-wait
     (for/list ([i (range from to)])
       (let ((cmdline (format "~a -c 2 -t 2 ~a.~a" *ping* subnet i)))
+        (when *debug*
+          (displayln cmdline))
         (thread (thunk (exec* cmdline))))))
     #t)
 
