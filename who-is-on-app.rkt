@@ -12,10 +12,11 @@
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 ;;;        2019-04-03 for*/list
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
+;;;        2019-04-10 japase name, display order
 
 (require db (planet dmac/spin) "weekday.rkt")
 
-(define VERSION "0.13")
+(define VERSION "0.13.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -258,6 +259,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</tr>"))
               (display "</table>")))))))
 
+(get "/info"
+  (lambda (req)
+    (html
+      (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
 ;;
 ;; start server
 ;;

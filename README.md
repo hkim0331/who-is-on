@@ -65,6 +65,8 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* 必要ない MAC は集めない。
+
 * なんだ、この uptime は？Racket のバージョンの違いか？
 
 ```
