@@ -47,6 +47,8 @@
   (map thread-wait
     (for/list ([i (range from to)])
       (let ((cmdline (format "~a -c 2 -t 2 ~a.~a" *ping* subnet i)))
+        (when *debug*
+          (displayln cmdline))
         (thread (thunk (exec* cmdline))))))
     #t)
 
@@ -70,4 +72,4 @@
     (displayln " success")
     (disconnect sql3)))
 
-(and (multi-ping *subnet* 10 100) (sleep 2) (who-is-on))
+(and (multi-ping *subnet* 10 99) (sleep 2) (who-is-on))
