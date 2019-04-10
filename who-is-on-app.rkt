@@ -121,6 +121,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (query-rows sql3 "select name,jname from users"))
 
 ;; continuation!
+;; FIXME: if did not find name in *name-jname*, j must be return name.
 (define (j name)
   (call/cc
    (lambda (return)
