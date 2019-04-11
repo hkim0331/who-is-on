@@ -63,21 +63,16 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (dd-mm s)
   (substring s 5 10))
 
-;(define (weekday? s)
-;  (let ((d (apply date (map string->number (string-split s "-")))))
-;    (not (or (saturday? d) (sunday? d)))))
-
 (define (weekdays days)
   (filter weekday? days))
 
-;; use macro?
+;; macro?
 (define (html contents . other)
   (format "~a~a~a"
     header
     (string-join (cons contents other))
     footer))
 
-;; replace with Redis?
 (define (status? name)
   (define (hh s)
     (string->number (first (string-split s ":"))))
@@ -144,7 +139,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      mac (first now) (second now))
     "OK"))
 
-;; continuation!
 ;; FIXME: if did not find name in *name-jname*, j must be return name.
 (define (j name)
   (call/cc
