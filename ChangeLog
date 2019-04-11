@@ -1,5 +1,8 @@
 2019-04-10  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
+	* 0.13
+	* 並びを年の順に。
+
 	* 0.12
 	* who-is-on-app.rkt: *name-jname* 辞書
 	* call/cc 初利用！(j name)
@@ -8,16 +11,13 @@
 	* get/post users に jname 分追加
 	* only-people: users から変更。関数の内容を表す名前に。
 
-	* 0.13
-	* 並びを年の順に。
-
 2019-04-09  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.10.1
-	* Makefile: install weekday.rkt
+	* update Makefile: install weekday.rkt
 
 	* 0.10
-	* weekday.rkt: merged.
+	* merge miyakwa's weekday.rkt
 
 2019-04-03  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 

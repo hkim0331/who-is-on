@@ -264,6 +264,13 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (html
       (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
       (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
+
+(define r #f)
+
+(get "/i-am-on"
+  (lambda (req)
+    (set! r req)))
+
 ;;
 ;; start server
 ;;
