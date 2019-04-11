@@ -14,7 +14,9 @@
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
 ;;;        2019-04-10 japase name, display order
 
-(require db (planet dmac/spin) "weekday.rkt")
+(require db web-server/http
+         (planet dmac/spin)
+         "weekday.rkt" "arp.rkt")
 
 (define VERSION "0.13.1")
 
@@ -94,6 +96,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
 
+(define (wifi? mac)
+  (query-maybe-value sql3 "select wifi from users where wifi=$1" mac))
+
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
     (format "~a:~a" (first ret) (second ret))))
@@ -124,6 +129,14 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define *name-jname*
   (query-rows sql3 "select name,jname from users"))
 
+(define (insert mac)
+  (let* ((now (now)))
+    (query-exec
+     sql3
+     "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
+     mac (first now) (second now))
+    "OK"))
+
 ;; continuation!
 ;; FIXME: if did not find name in *name-jname*, j must be return name.
 (define (j name)
@@ -133,9 +146,41 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
        (when (string=? name (vector-ref pair 0))
          (return (vector-ref pair 1)))))))
 
+;; not collect, but enough.
+(define (in? ip)
+  (regexp-match (regexp (getenv "WIO_SUBNET")) ip))
+
+(define (ip->mac ip)
+  (call/cc
+   (lambda (return)
+     (for ([line (arp)])
+       (when (string=?
+              (first (regexp-match #rx"[0-9]+.[0-9]+.[0-9]+.[0-9]+" line))
+              ip)
+         (return (fourth (string-split line)))))
+     (return #f))))
+
 ;;;
 ;;; end points
 ;;;
+
+(get "/i-m-here"
+  (lambda (req)
+    (let ((client-ip (request-client-ip req)))
+      (if (in? client-ip)
+          (let ((mac (pad (ip->mac client-ip))))
+            (if (wifi? mac)
+                (begin
+                  (insert mac)
+                  (html (format "OK ~a is ~a" client-ip mac)))
+                (html (format "~a ~a not found in table" client-ip mac))))
+          (html "not in C104.")))))
+
+(get "/info"
+  (lambda (req)
+    (html
+      (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
 
 ;; http -f http://localhost:8000/on name=***** pass=*****
 (post "/on"
@@ -146,12 +191,13 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                      "select wifi from users where name=$1"
                      (params req 'name))))
           (if (and (string=? pass (params req 'pass)) wifi)
-              (let* ((now (now)))
-                (query-exec
-                 sql3
-                 "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
-                 wifi (first now) (second now))
-                "OK")
+              ;; (let* ((now (now)))
+              ;;   (query-exec
+              ;;    sql3
+              ;;    "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
+              ;;    wifi (first now) (second now))
+              ;;   "OK")
+              (insert wifi)
               "NG"))))
 
 (get "/"
@@ -182,22 +228,23 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (displayln "</table>")
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
-;jname
+
 (get "/users"
   (lambda (req)
     (html
      (with-output-to-string
        (lambda ()
          (displayln "<ul>")
-         ;;
-         ;; (for ([u (query-list sql3 "select name from users")])
          (for ([u (users)])
            (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
                               (if (status? u) "red" "black")
                               u (j u))))
          (displayln "</ul>")
          (displayln
-          "<p>[ <a href='/list'>list</a> | <a href='/users/new'>add user</a> ]</p>"))))))
+          "<p><a href='/list' class='btn btn-primary btn-sm'>list</a>
+<a href='/i-m-here' class='btn btn-primary btn-sm'>いるよ</a>
+<a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
+</p>"))))))
 
 (get "/user/:name/:date"
   (lambda (req)
@@ -265,14 +312,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
       (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
       (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
 
-(define r #f)
-
-(get "/i-am-on"
-  (lambda (req)
-    (set! r req)))
 
 ;;
 ;; start server
 ;;
 (displayln "start at 8000/tcp")
-(run #:listen-ip "127.0.0.1" #:port 8000)
+;(run #:listen-ip "127.0.0.1" #:port 8000)
+(run #:listen-ip #f #:port 8000)
+
