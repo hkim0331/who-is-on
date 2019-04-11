@@ -1,3 +1,11 @@
+2019-04-11  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+	* 0.14 いるよボタン
+	* who-is-on-app.rkt: (get "/i-m-here") とそれに関連する関数。
+	* in? 同一サブネットか？
+	* ip->mac arp テーブルを引いて ip に対応する mac アドレスを見つける。
+	* wifi? mac は users テーブルに登録があるか？
+	* arp 関連を who-is-on-update.rkt から分離独立させて arp.rkt とする。
+
 2019-04-10  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.13

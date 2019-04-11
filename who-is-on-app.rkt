@@ -13,12 +13,13 @@
 ;;;        2019-04-03 for*/list
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
 ;;;        2019-04-10 japase name, display order
+;;;        2019-04-11 いるよボタン
 
 (require db web-server/http
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.13.1")
+(define VERSION "0.14")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -117,11 +118,17 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 
 ;;FIXME, not DRY
 (define (users-wifi)
-  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) (only-people)))))
-    (query-list sql3 (format "select wifi from users where ~a order by cat desc, name" q))))
+  (let ((q (string-join-with
+            "or"
+            (map (lambda (s) (format "name='~a'" s)) (only-people)))))
+    (query-list
+     sql3
+     (format "select wifi from users where ~a order by cat desc, name" q))))
 
 (define (dates-all)
-  (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
+  (query-list
+   sql3
+   "select distinct(date) from mac_addrs order by date desc"))
 
 (define (wifi->name wifi)
   (first (query-list sql3 "select name from users where wifi=$1" wifi)))
@@ -172,8 +179,8 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
             (if (wifi? mac)
                 (begin
                   (insert mac)
-                  (html (format "OK ~a is ~a" client-ip mac)))
-                (html (format "~a ~a not found in table" client-ip mac))))
+                  (html (format "OK.")))
+                (html (format "not registered."))))
           (html "not in C104.")))))
 
 (get "/info"
@@ -191,12 +198,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                      "select wifi from users where name=$1"
                      (params req 'name))))
           (if (and (string=? pass (params req 'pass)) wifi)
-              ;; (let* ((now (now)))
-              ;;   (query-exec
-              ;;    sql3
-              ;;    "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
-              ;;    wifi (first now) (second now))
-              ;;   "OK")
               (insert wifi)
               "NG"))))
 
@@ -242,7 +243,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (displayln "</ul>")
          (displayln
           "<p><a href='/list' class='btn btn-primary btn-sm'>list</a>
-<a href='/i-m-here' class='btn btn-primary btn-sm'>いるよ</a>
+<a href='/i-m-here' class='btn btn-danger btn-sm'>いるよ</a>
 <a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
 </p>"))))))
 
@@ -311,12 +312,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (html
       (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
       (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
-
-
 ;;
 ;; start server
 ;;
 (displayln "start at 8000/tcp")
-;(run #:listen-ip "127.0.0.1" #:port 8000)
+(run #:listen-ip "127.0.0.1" #:port 8000)
+;; for debug
 (run #:listen-ip #f #:port 8000)
-

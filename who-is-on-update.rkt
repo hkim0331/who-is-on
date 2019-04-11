@@ -13,7 +13,7 @@
 (define *db* (or (getenv "WIO_DB") "./who-is-on.sqlite3"))
 ;;(define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
 (define *ping* (or (getenv "WIO_PING") "/bin/ping"))
-(define *subnet* (or (getenv "WIO_SUBNET") "192.168.0"))
+(define *subnet* (or (getenv "WIO_SUBNET") "10.0.33"))
 
 (when *debug*
   (displayln (format "*db* ~a" *db*))
@@ -25,6 +25,7 @@
   (when *debug*
     (displayln s)))
 
+;; arp.rkt
 ;; (define (exec cmdline)
 ;;     (let* ((proc (apply process* (string-split cmdline)))
 ;;            (port (first proc))
@@ -34,13 +35,13 @@
 ;;           (set! ret (cons line ret))
 ;;           (loop (read-line port))))
 ;;       ret))
-
+;;
 ;; (define (exec* cmdline)
 ;;   (apply process* (string-split cmdline)))
-
+;;
 ;; (define (arp)
 ;;   (exec (format "~a -an" *arp*)))
-
+;;
 ;; (define (pad mac)
 ;;   (define (pad0 s)
 ;;     (if (= 1 (string-length s))
