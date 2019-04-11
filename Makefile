@@ -20,6 +20,9 @@ install:
 	for i in update.sh update-async.sh who-is-*.rkt weekday.rkt; do \
 		install -m 0755 $$i ${DEST}; \
 	done
+	for i in weekday.rkt arp.rkt; do \
+		install -m 0644 $$i ${DEST}; \
+	done
 	make production
 	@echo please restart who-is-on by
 	@echo sudo systemctl restart who-is-on
