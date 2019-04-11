@@ -65,6 +65,8 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* 必要ない MAC は集めない。
+
 * なんだ、この uptime は？Racket のバージョンの違いか？
 
 ```
@@ -110,6 +112,14 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED/UPDATED
+
+* 0.13 テーブルに cat コラム。並びを cat 順にする。
+
+* 0.12 テーブルに jname。表示を日本語に。call/cc 使ったがまだダメだね。会得が不十分。
+
+* 0.11 find-me.rkt。arp テーブルに乗らないユーザがある。
+
+* 0.10 絵文字、README.md に図で説明。
 
 * 0.9 /list で一覧表示。
 

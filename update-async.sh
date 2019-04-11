@@ -1,7 +1,10 @@
 #!/bin/sh
 # 'make install' rewrites DIR.
 
-DIR=.
-. ${DIR}/.env && \
-    racket ${DIR}/who-is-on-update.rkt >> ${DIR}/update.log 2>&1
+DIR=/srv/who-is-on
+. ${DIR}/.env
+echo WIO_SUBNET $WIO_SUBNET
+echo WIO_DB $WIO_DB
+racket ${DIR}/who-is-on-update.rkt
+
 

@@ -2,7 +2,9 @@ drop table if exists users;
 create table users (
   id     integer primary key autoincrement,
   name   varchar(32) not null unique,
+  jname  varchar(32) "",
   wifi   char(17) not null unique,
+  group int default 0,
   create_at       timestamp default (datetime('now','localtime')),
   update_at       timestamp default (datetime('now','localtime')));
 

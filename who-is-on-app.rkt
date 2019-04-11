@@ -12,10 +12,14 @@
 ;;;        2019-03-28 cancel 2019-03-25, define 'on'
 ;;;        2019-04-03 for*/list
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
+;;;        2019-04-10 japase name, display order
+;;;        2019-04-11 いるよボタン
 
-(require db (planet dmac/spin) "weekday.rkt")
+(require db web-server/http
+         (planet dmac/spin)
+         "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.11")
+(define VERSION "0.14")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -48,8 +52,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 " VERSION))
 
 (define (users)
-  (let ((all (query-list sql3 "select name from users")))
-    (filter (lambda (s) (not (regexp-match #rx"^imac" s))) all)))
+  (query-list sql3 "select name from users order by cat desc,name"))
+
+(define (only-people)
+  (filter (lambda (s) (not (regexp-match #rx"^imac" s))) (users)))
 
 (define (now)
   (string-split (query-value sql3 "select datetime('now','localtime')")))
@@ -91,6 +97,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
 
+(define (wifi? mac)
+  (query-maybe-value sql3 "select wifi from users where wifi=$1" mac))
+
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
     (format "~a:~a" (first ret) (second ret))))
@@ -107,17 +116,79 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (string-join-with sep strings)
   (string-join (interpose sep strings)))
 
+;;FIXME, not DRY
 (define (users-wifi)
-  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) (users)))))
-    (query-list sql3 (format "select wifi from users where ~a" q))))
+  (let ((q (string-join-with
+            "or"
+            (map (lambda (s) (format "name='~a'" s)) (only-people)))))
+    (query-list
+     sql3
+     (format "select wifi from users where ~a order by cat desc, name" q))))
 
 (define (dates-all)
-  (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
+  (query-list
+   sql3
+   "select distinct(date) from mac_addrs order by date desc"))
 
 (define (wifi->name wifi)
-  (query-list sql3 "select name from users where wifi=$1" wifi))
+  (first (query-list sql3 "select name from users where wifi=$1" wifi)))
 
+(define *name-jname*
+  (query-rows sql3 "select name,jname from users"))
+
+(define (insert mac)
+  (let* ((now (now)))
+    (query-exec
+     sql3
+     "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
+     mac (first now) (second now))
+    "OK"))
+
+;; continuation!
+;; FIXME: if did not find name in *name-jname*, j must be return name.
+(define (j name)
+  (call/cc
+   (lambda (return)
+     (for ([pair *name-jname*])
+       (when (string=? name (vector-ref pair 0))
+         (return (vector-ref pair 1)))))))
+
+;; not collect, but enough.
+(define (in? ip)
+  (regexp-match (regexp (getenv "WIO_SUBNET")) ip))
+
+(define (ip->mac ip)
+  (call/cc
+   (lambda (return)
+     (for ([line (arp)])
+       (when (string=?
+              (first (regexp-match #rx"[0-9]+.[0-9]+.[0-9]+.[0-9]+" line))
+              ip)
+         (return (fourth (string-split line)))))
+     (return #f))))
+
+;;;
 ;;; end points
+;;;
+
+(get "/i-m-here"
+  (lambda (req)
+    (let ((client-ip (request-client-ip req)))
+      (if (in? client-ip)
+          (let ((mac (pad (ip->mac client-ip))))
+            (if (wifi? mac)
+                (begin
+                  (insert mac)
+                  (html (format "OK.")))
+                (html (format "not registered."))))
+          (html "not in C104.")))))
+
+(get "/info"
+  (lambda (req)
+    (html
+      (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
+
 ;; http -f http://localhost:8000/on name=***** pass=*****
 (post "/on"
       (lambda (req)
@@ -127,12 +198,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                      "select wifi from users where name=$1"
                      (params req 'name))))
           (if (and (string=? pass (params req 'pass)) wifi)
-              (let* ((now (now)))
-                (query-exec
-                 sql3
-                 "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
-                 wifi (first now) (second now))
-                "OK")
+              (insert wifi)
               "NG"))))
 
 (get "/"
@@ -144,8 +210,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (lambda (req)
     (query-exec
       sql3
-      "insert into users (name, wifi) values ($1, $2)"
+      "insert into users (name, jname, wifi) values ($1, $2, $3)"
       (params req 'name)
+      (params req 'jname)
       (params req 'wifi))
     (html "<p>OK.</p>")))
 
@@ -157,6 +224,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (displayln "<form method='post' action='/users/create'>")
           (displayln "<table>")
           (displayln "<tr><th>name</th><td><input name='name'></td></tr>")
+          (displayln "<tr><th>日本名</th><td><input name='jname'></td></tr>")
           (displayln "<tr><th>wifi</th><td><input name='wifi'></td></tr>")
           (displayln "</table>")
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
@@ -168,13 +236,16 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      (with-output-to-string
        (lambda ()
          (displayln "<ul>")
-         (for ([u (query-list sql3 "select name from users")])
+         (for ([u (users)])
            (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
                               (if (status? u) "red" "black")
-                              u u)))
+                              u (j u))))
          (displayln "</ul>")
          (displayln
-          "<p>[ <a href='/list'>list</a> | <a href='/users/new'>add user</a> ]</p>"))))))
+          "<p><a href='/list' class='btn btn-primary btn-sm'>list</a>
+<a href='/i-m-here' class='btn btn-danger btn-sm'>いるよ</a>
+<a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
+</p>"))))))
 
 (get "/user/:name/:date"
   (lambda (req)
@@ -208,7 +279,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
-;;2019-04-03
+;;2019-04-10, j
 (get "/list"
      (lambda (req)
        (let ((users (users-wifi))
@@ -220,7 +291,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
               (display "<table>")
               (display "<tr><th></th>")
               (for ([u users])
-                (display (format "<td>~a</td>" (wifi->name u))))
+                (display (format "<td> ~a, </td>" (j (wifi->name u)))))
               (display "</tr>")
               (for ([d dates])
                 (let ((st
@@ -236,8 +307,15 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</tr>"))
               (display "</table>")))))))
 
+(get "/info"
+  (lambda (req)
+    (html
+      (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
 ;;
 ;; start server
 ;;
 (displayln "start at 8000/tcp")
 (run #:listen-ip "127.0.0.1" #:port 8000)
+;; for debug
+(run #:listen-ip #f #:port 8000)
