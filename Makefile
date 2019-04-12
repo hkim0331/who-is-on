@@ -33,7 +33,7 @@ production:
 		-e "s|action='/users|action='/w/users|g" \
 		-e "s|href='/i|href='/w/i|g" \
 		-e "s|href='/list|href='/w/list|g" \
-		${DEST}/who-is-on-app.rkt
+			${DEST}/who-is-on-app.rkt
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update.sh
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update-async.sh
 	cp VERSION ${DEST}/
