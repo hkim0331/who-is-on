@@ -93,7 +93,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (query-value sql3 "select wifi from users where name=$1" name))
 
 (define (wifi? mac)
-  (query-maybe-value sql3 "select wifi from users where wifi=$1" mac))
+  (query-maybe-value sql3 "id wifi from users where wifi=$1" mac))
 
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
@@ -161,6 +161,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (return (fourth (string-split line)))))
      (return #f))))
 
+;;0.14.2
 (define (x-real-ip req)
   (let ((header
          (first
@@ -318,12 +319,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
       (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET"))
       (format "<p>x-real-ip: ~a</p>" (x-real-ip req)))))
 
-
-
 ;;
 ;; start server
 ;;
 (displayln "start at 8000/tcp")
-;;(run #:listen-ip "127.0.0.1" #:port 8000)
+(run #:listen-ip "127.0.0.1" #:port 8000)
 ;; for debug
-(run #:listen-ip #f #:port 8000)
+;;(run #:listen-ip #f #:port 8000)
+
