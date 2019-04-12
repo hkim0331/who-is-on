@@ -19,7 +19,7 @@
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.14.1")
+(define VERSION "0.14.2")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -161,13 +161,21 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (return (fourth (string-split line)))))
      (return #f))))
 
+(define (x-real-ip req)
+  (let ((header
+         (first
+          (filter
+           (lambda (x) (bytes=? #"X-Real-IP" (header-field x)))
+           (request-headers/raw req)))))
+    (bytes->string/latin-1 (header-value header))))
+
 ;;;
 ;;; end points
 ;;;
 
 (get "/i-m-here"
   (lambda (req)
-    (let ((client-ip (request-client-ip req)))
+    (let ((client-ip (x-real-ip req)))
       (if (in? client-ip)
           (let ((mac (pad (ip->mac client-ip))))
             (if (wifi? mac)
@@ -300,16 +308,22 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                                          "")))))
                 (display "</tr>"))
               (display "</table>")))))))
-
+;;debug
+(define r #f)
 (get "/info"
-  (lambda (req)
+     (lambda (req)
+      (set! r req)
     (html
       (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
-      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET"))
+      (format "<p>x-real-ip: ~a</p>" (x-real-ip req)))))
+
+
+
 ;;
 ;; start server
 ;;
 (displayln "start at 8000/tcp")
-(run #:listen-ip "127.0.0.1" #:port 8000)
+;;(run #:listen-ip "127.0.0.1" #:port 8000)
 ;; for debug
 (run #:listen-ip #f #:port 8000)
