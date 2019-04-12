@@ -93,7 +93,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (query-value sql3 "select wifi from users where name=$1" name))
 
 (define (wifi? mac)
-  (query-maybe-value sql3 "select wifi from users where wifi=$1" mac))
+  (query-maybe-value sql3 "id wifi from users where wifi=$1" mac))
 
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
@@ -161,6 +161,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (return (fourth (string-split line)))))
      (return #f))))
 
+;;0.14.2
 (define (x-real-ip req)
   (let ((header
          (first
