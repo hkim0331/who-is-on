@@ -1,3 +1,17 @@
+2019-04-12  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.14.2
+	* who-is-on-app.rkt: nginx のプロキシーを通すわけで、
+	アプリに届く client-ip は 127.0.0.1 になってしまう。
+	nginx が付与する x-real-ip ヘッダから元の IP を拾う。
+	* しかし、拾ってみると IPv6 で通信していることがわかった。
+	arp6 を考えるのは面倒なので、ネットで探してサーバレベルで IPv6 を
+	ディスエーブルしたところ、なんかおかしい。
+	nginx が IPv6 をリッスンしてるよ！
+	コンフィグを書き換えて nginx が IPv4 のみをリッスンするようにし、
+	解決。細かいメッセージなどの調整はこの後。
+	lxd のレベルで IPv6 止めても良かったかも。
+
 2019-04-11  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 	* 0.14 いるよボタン
 	* who-is-on-app.rkt: (get "/i-m-here") とそれに関連する関数。

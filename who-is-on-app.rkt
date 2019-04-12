@@ -318,12 +318,11 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
       (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET"))
       (format "<p>x-real-ip: ~a</p>" (x-real-ip req)))))
 
-
-
 ;;
 ;; start server
 ;;
 (displayln "start at 8000/tcp")
-;;(run #:listen-ip "127.0.0.1" #:port 8000)
+(run #:listen-ip "127.0.0.1" #:port 8000)
 ;; for debug
-(run #:listen-ip #f #:port 8000)
+;;(run #:listen-ip #f #:port 8000)
+
