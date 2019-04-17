@@ -20,7 +20,7 @@
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.15.1")
+(define VERSION "0.15.3")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -98,7 +98,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (query-value sql3 "select wifi from users where name=$1" name))
 
 (define (wifi? mac)
-  (query-maybe-value sql3 "id wifi from users where wifi=$1" mac))
+  (query-maybe-value sql3 "select id wifi from users where wifi=$1" mac))
 
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
@@ -168,6 +168,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      (return #f))))
 
 ;;0.14.2
+;;BUG
 (define (x-real-ip req)
   (let ((headers
          (filter
@@ -175,7 +176,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (request-headers/raw req))))
     (if (null? headers)
         "not found"
-        (bytes->string/latin-1 (header-value (first header))))))
+        (bytes->string/latin-1 (header-value (first headers))))))
 
 ;;;
 ;;; end points
@@ -183,17 +184,21 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 
 ;; nginx を介さないと。
 ;; 本当は get じゃなくて post だな。
+;;BUG
 (get "/i-m-here"
   (lambda (req)
+;;  (displayln (format "req: ~a" req))
     (let ((client-ip (x-real-ip req)))
+;;    (displayln (format "client-ip: ~a" client-ip))
       (if (in? client-ip)
-          (let ((mac (pad (ip->mac client-ip))))
-            (if (wifi? mac)
-                (begin
-                  (insert mac)
-                  (html (format "OK.")))
-                (html (format "not registered."))))
-          (html "not in C104.")))))
+        (let ((mac (pad (ip->mac client-ip))))
+              (displayln (format "mac: ~a" mac))
+          (if (wifi? mac)
+            (begin
+              (insert mac)
+              (html (format "OK.")))
+            (html (format "not registered."))))
+        (html "not in C104.")))))
 
 (get "/info"
   (lambda (req)
