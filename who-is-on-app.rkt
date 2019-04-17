@@ -20,7 +20,7 @@
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.15.3")
+(define VERSION "0.15.4")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -78,6 +78,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (string-join (cons contents other))
     footer))
 
+;;want rewrite
 (define (status? name)
   (define (hh s)
     (string->number (first (string-split s ":"))))
@@ -91,7 +92,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
         false
         (let* ((now (now)))
           (and (string=? (first now) (vector-ref (first ret) 0))
-               ;; too loose?
+               ;; max 2 hours
                (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
 
 (define (wifi name)
@@ -256,12 +257,12 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (for ([u (users)])
            (displayln
             (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a></td><tr>"
-                    (if (status? u) "😀" "▪️ ")
+                    (if (status? u) "😀" "▪️")
                     u (j u))))
-         (displayln "</table></div>")
+         (displayln "</table></div><br>")
          (displayln
           "<p>
-<a href='/i-m-here' class='btn btn-outline-danger btn-sm'>😀</a>
+<a href='/i-m-here' class='btn btn-outline-primary btn-sm'>😀</a>
 <a href='/list' class='btn btn-primary btn-sm'>list</a>
 <a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
 </p>"))))))
@@ -298,7 +299,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
-;;2019-04-10, j
 (get "/list"
      (lambda (req)
        (let ((users (users-wifi))
