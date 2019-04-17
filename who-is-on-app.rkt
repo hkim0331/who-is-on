@@ -14,6 +14,7 @@
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
 ;;;        2019-04-10 japase name, display order
 ;;;        2019-04-11 いるよボタン
+;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
 
 (require db web-server/http
          (planet dmac/spin)
@@ -39,7 +40,11 @@
 <body>
 <div class='container'>
 <h2>Who is on?</h2>
-<p><a href='/users'>back</a></p>
+<p>
+<a href='/users' class='btn btn-outline-primary btn-sm'>back</a>
+<a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
+<a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
+</p>
 ")
 
 (define footer
@@ -174,6 +179,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 ;;; end points
 ;;;
 
+;; nginx を介さないと 
 (get "/i-m-here"
   (lambda (req)
     (let ((client-ip (x-real-ip req)))
@@ -238,15 +244,17 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (html
      (with-output-to-string
        (lambda ()
-         (displayln "<ul>")
+         (displayln "<table>")
          (for ([u (users)])
-           (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
-                              (if (status? u) "red" "black")
-                              u (j u))))
-         (displayln "</ul>")
+           (displayln
+            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a></td><tr>"
+                    (if (status? u) "😀" "▪️ ")
+                    u (j u))))
+         (displayln "</table>")
          (displayln
-          "<p><a href='/list' class='btn btn-primary btn-sm'>list</a>
-<a href='/i-m-here' class='btn btn-danger btn-sm'>いるよ</a>
+          "<p>
+<a href='/i-m-here' class='btn btn-outline-danger btn-sm'>😀</a>
+<a href='/list' class='btn btn-primary btn-sm'>list</a>
 <a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
 </p>"))))))
 
