@@ -20,7 +20,7 @@
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.15")
+(define VERSION "0.15.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -154,7 +154,8 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 
 ;; not collect, but enough.
 (define (in? ip)
-  (regexp-match (regexp (getenv "WIO_SUBNET")) ip))
+  (let ((subnet (getenv "WIO_SUBNET")))
+    (and subnet (regexp-match (regexp subnet) ip))))
 
 (define (ip->mac ip)
   (call/cc
@@ -168,18 +169,20 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 
 ;;0.14.2
 (define (x-real-ip req)
-  (let ((header
-         (first
-          (filter
-           (lambda (x) (bytes=? #"X-Real-IP" (header-field x)))
-           (request-headers/raw req)))))
-    (bytes->string/latin-1 (header-value header))))
+  (let ((headers
+         (filter
+          (lambda (x) (bytes=? #"X-Real-IP" (header-field x)))
+          (request-headers/raw req))))
+    (if (null? headers)
+        "not found"
+        (bytes->string/latin-1 (header-value (first header))))))
 
 ;;;
 ;;; end points
 ;;;
 
-;; nginx を介さないと 
+;; nginx を介さないと。
+;; 本当は get じゃなくて post だな。
 (get "/i-m-here"
   (lambda (req)
     (let ((client-ip (x-real-ip req)))
@@ -244,13 +247,13 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (html
      (with-output-to-string
        (lambda ()
-         (displayln "<table>")
+         (displayln "<div class='container'><table>")
          (for ([u (users)])
            (displayln
             (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a></td><tr>"
                     (if (status? u) "😀" "▪️ ")
                     u (j u))))
-         (displayln "</table>")
+         (displayln "</table></div>")
          (displayln
           "<p>
 <a href='/i-m-here' class='btn btn-outline-danger btn-sm'>😀</a>
