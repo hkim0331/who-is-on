@@ -1,4 +1,9 @@
 2019-04-17  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.15.4 bugfix
+	「いるよ」でエンバグ。c104 でオンサイトデバッグした内容をきちんと取り込んでいなかったか。
+	別アルゴリズムで修正。
+
 	* 0.15.1
 	* in? タイプチェック。
 	* x-real-ip: bytes->string の前にタイプチェック。
