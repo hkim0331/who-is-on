@@ -1,3 +1,8 @@
+2019-04-17  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+	* 0.15
+	* who-is-on-app.rkt: レイアウトを現代風に。
+	redmine と L99 へのリンクをナビに。
+
 2019-04-12  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.14.2
