@@ -14,12 +14,13 @@
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
 ;;;        2019-04-10 japase name, display order
 ;;;        2019-04-11 いるよボタン
+;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
 
 (require db web-server/http
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.14.2")
+(define VERSION "0.15.4")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -39,7 +40,11 @@
 <body>
 <div class='container'>
 <h2>Who is on?</h2>
-<p><a href='/users'>back</a></p>
+<p>
+<a href='/users' class='btn btn-outline-primary btn-sm'>back</a>
+<a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
+<a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
+</p>
 ")
 
 (define footer
@@ -73,6 +78,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (string-join (cons contents other))
     footer))
 
+;;want rewrite
 (define (status? name)
   (define (hh s)
     (string->number (first (string-split s ":"))))
@@ -86,14 +92,14 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
         false
         (let* ((now (now)))
           (and (string=? (first now) (vector-ref (first ret) 0))
-               ;; too loose?
+               ;; max 2 hours
                (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
 
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
 
 (define (wifi? mac)
-  (query-maybe-value sql3 "id wifi from users where wifi=$1" mac))
+  (query-maybe-value sql3 "select id wifi from users where wifi=$1" mac))
 
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
@@ -149,7 +155,8 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 
 ;; not collect, but enough.
 (define (in? ip)
-  (regexp-match (regexp (getenv "WIO_SUBNET")) ip))
+  (let ((subnet (getenv "WIO_SUBNET")))
+    (and subnet (regexp-match (regexp subnet) ip))))
 
 (define (ip->mac ip)
   (call/cc
@@ -162,29 +169,37 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      (return #f))))
 
 ;;0.14.2
+;;BUG
 (define (x-real-ip req)
-  (let ((header
-         (first
-          (filter
-           (lambda (x) (bytes=? #"X-Real-IP" (header-field x)))
-           (request-headers/raw req)))))
-    (bytes->string/latin-1 (header-value header))))
+  (let ((headers
+         (filter
+          (lambda (x) (bytes=? #"X-Real-IP" (header-field x)))
+          (request-headers/raw req))))
+    (if (null? headers)
+        "not found"
+        (bytes->string/latin-1 (header-value (first headers))))))
 
 ;;;
 ;;; end points
 ;;;
 
+;; nginx を介さないと。
+;; 本当は get じゃなくて post だな。
+;;BUG
 (get "/i-m-here"
   (lambda (req)
+;;  (displayln (format "req: ~a" req))
     (let ((client-ip (x-real-ip req)))
+;;    (displayln (format "client-ip: ~a" client-ip))
       (if (in? client-ip)
-          (let ((mac (pad (ip->mac client-ip))))
-            (if (wifi? mac)
-                (begin
-                  (insert mac)
-                  (html (format "OK.")))
-                (html (format "not registered."))))
-          (html "not in C104.")))))
+        (let ((mac (pad (ip->mac client-ip))))
+              (displayln (format "mac: ~a" mac))
+          (if (wifi? mac)
+            (begin
+              (insert mac)
+              (html (format "OK.")))
+            (html (format "not registered."))))
+        (html "not in C104.")))))
 
 (get "/info"
   (lambda (req)
@@ -238,15 +253,17 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (html
      (with-output-to-string
        (lambda ()
-         (displayln "<ul>")
+         (displayln "<div class='container'><table>")
          (for ([u (users)])
-           (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
-                              (if (status? u) "red" "black")
-                              u (j u))))
-         (displayln "</ul>")
+           (displayln
+            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a></td><tr>"
+                    (if (status? u) "😀" "▪️")
+                    u (j u))))
+         (displayln "</table></div><br>")
          (displayln
-          "<p><a href='/list' class='btn btn-primary btn-sm'>list</a>
-<a href='/i-m-here' class='btn btn-danger btn-sm'>いるよ</a>
+          "<p>
+<a href='/i-m-here' class='btn btn-outline-primary btn-sm'>😀</a>
+<a href='/list' class='btn btn-primary btn-sm'>list</a>
 <a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
 </p>"))))))
 
@@ -282,7 +299,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
-;;2019-04-10, j
 (get "/list"
      (lambda (req)
        (let ((users (users-wifi))
