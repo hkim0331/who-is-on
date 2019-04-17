@@ -13,10 +13,14 @@
 ;;;        2019-04-03 for*/list
 ;;;        2019-04-09 merge miyakawa's weekday.rkt
 ;;;        2019-04-10 japase name, display order
+;;;        2019-04-11 いるよボタン
+;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
 
-(require db (planet dmac/spin) "weekday.rkt")
+(require db web-server/http
+         (planet dmac/spin)
+         "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.13.1")
+(define VERSION "0.15.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -36,7 +40,11 @@
 <body>
 <div class='container'>
 <h2>Who is on?</h2>
-<p><a href='/users'>back</a></p>
+<p>
+<a href='/users' class='btn btn-outline-primary btn-sm'>back</a>
+<a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
+<a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
+</p>
 ")
 
 (define footer
@@ -60,21 +68,16 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (dd-mm s)
   (substring s 5 10))
 
-;(define (weekday? s)
-;  (let ((d (apply date (map string->number (string-split s "-")))))
-;    (not (or (saturday? d) (sunday? d)))))
-
 (define (weekdays days)
   (filter weekday? days))
 
-;; use macro?
+;; macro?
 (define (html contents . other)
   (format "~a~a~a"
     header
     (string-join (cons contents other))
     footer))
 
-;; replace with Redis?
 (define (status? name)
   (define (hh s)
     (string->number (first (string-split s ":"))))
@@ -94,6 +97,9 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
 
+(define (wifi? mac)
+  (query-maybe-value sql3 "select id wifi from users where wifi=$1" mac))
+
 (define (hh:mm s)
   (let ((ret (string-split s ":")))
     (format "~a:~a" (first ret) (second ret))))
@@ -112,11 +118,17 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 
 ;;FIXME, not DRY
 (define (users-wifi)
-  (let ((q (string-join-with "or" (map (lambda (s) (format "name='~a'" s)) (only-people)))))
-    (query-list sql3 (format "select wifi from users where ~a order by cat desc, name" q))))
+  (let ((q (string-join-with
+            "or"
+            (map (lambda (s) (format "name='~a'" s)) (only-people)))))
+    (query-list
+     sql3
+     (format "select wifi from users where ~a order by cat desc, name" q))))
 
 (define (dates-all)
-  (query-list sql3 "select distinct(date) from mac_addrs order by date desc"))
+  (query-list
+   sql3
+   "select distinct(date) from mac_addrs order by date desc"))
 
 (define (wifi->name wifi)
   (first (query-list sql3 "select name from users where wifi=$1" wifi)))
@@ -124,7 +136,14 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (define *name-jname*
   (query-rows sql3 "select name,jname from users"))
 
-;; continuation!
+(define (insert mac)
+  (let* ((now (now)))
+    (query-exec
+     sql3
+     "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
+     mac (first now) (second now))
+    "OK"))
+
 ;; FIXME: if did not find name in *name-jname*, j must be return name.
 (define (j name)
   (call/cc
@@ -133,9 +152,59 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
        (when (string=? name (vector-ref pair 0))
          (return (vector-ref pair 1)))))))
 
+;; not collect, but enough.
+(define (in? ip)
+  (let ((subnet (getenv "WIO_SUBNET")))
+    (and subnet (regexp-match (regexp subnet) ip))))
+
+(define (ip->mac ip)
+  (call/cc
+   (lambda (return)
+     (for ([line (arp)])
+       (when (string=?
+              (first (regexp-match #rx"[0-9]+.[0-9]+.[0-9]+.[0-9]+" line))
+              ip)
+         (return (fourth (string-split line)))))
+     (return #f))))
+
+;;0.14.2
+;;BUG
+(define (x-real-ip req)
+  (let ((headers
+         (filter
+          (lambda (x) (bytes=? #"X-Real-IP" (header-field x)))
+          (request-headers/raw req))))
+    (if (null? headers)
+        "not found"
+        (bytes->string/latin-1 (header-value (first headers))))))
+
 ;;;
 ;;; end points
 ;;;
+
+;; nginx を介さないと。
+;; 本当は get じゃなくて post だな。
+;;BUG
+(get "/i-m-here"
+  (lambda (req)
+;;  (displayln (format "req: ~a" req))
+    (let ((client-ip (x-real-ip req)))
+;;    (displayln (format "client-ip: ~a" client-ip))
+      (if (in? client-ip)
+        (let ((mac (pad (ip->mac client-ip))))
+              (displayln (format "mac: ~a" mac))
+          (if (wifi? mac)
+            (begin
+              (insert mac)
+              (html (format "OK.")))
+            (html (format "not registered."))))
+        (html "not in C104.")))))
+
+(get "/info"
+  (lambda (req)
+    (html
+      (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
 
 ;; http -f http://localhost:8000/on name=***** pass=*****
 (post "/on"
@@ -146,12 +215,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                      "select wifi from users where name=$1"
                      (params req 'name))))
           (if (and (string=? pass (params req 'pass)) wifi)
-              (let* ((now (now)))
-                (query-exec
-                 sql3
-                 "insert into mac_addrs (mac,date,time) values ($1,$2,$3)"
-                 wifi (first now) (second now))
-                "OK")
+              (insert wifi)
               "NG"))))
 
 (get "/"
@@ -182,22 +246,25 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
           (displayln "</table>")
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
-;jname
+
 (get "/users"
   (lambda (req)
     (html
      (with-output-to-string
        (lambda ()
-         (displayln "<ul>")
-         ;;
-         ;; (for ([u (query-list sql3 "select name from users")])
+         (displayln "<div class='container'><table>")
          (for ([u (users)])
-           (displayln (format "<li class='~a'><a href='/user/~a'>~a</a></li>"
-                              (if (status? u) "red" "black")
-                              u (j u))))
-         (displayln "</ul>")
+           (displayln
+            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a></td><tr>"
+                    (if (status? u) "😀" "▪️ ")
+                    u (j u))))
+         (displayln "</table></div>")
          (displayln
-          "<p>[ <a href='/list'>list</a> | <a href='/users/new'>add user</a> ]</p>"))))))
+          "<p>
+<a href='/i-m-here' class='btn btn-outline-danger btn-sm'>😀</a>
+<a href='/list' class='btn btn-primary btn-sm'>list</a>
+<a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
+</p>"))))))
 
 (get "/user/:name/:date"
   (lambda (req)
@@ -258,14 +325,21 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                                          "")))))
                 (display "</tr>"))
               (display "</table>")))))))
-
+;;debug
+(define r #f)
 (get "/info"
-  (lambda (req)
+     (lambda (req)
+      (set! r req)
     (html
       (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
-      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET")))))
+      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET"))
+      (format "<p>x-real-ip: ~a</p>" (x-real-ip req)))))
+
 ;;
 ;; start server
 ;;
 (displayln "start at 8000/tcp")
 (run #:listen-ip "127.0.0.1" #:port 8000)
+;; for debug
+;;(run #:listen-ip #f #:port 8000)
+

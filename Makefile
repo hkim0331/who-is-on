@@ -20,6 +20,9 @@ install:
 	for i in update.sh update-async.sh who-is-*.rkt weekday.rkt; do \
 		install -m 0755 $$i ${DEST}; \
 	done
+	for i in weekday.rkt arp.rkt; do \
+		install -m 0644 $$i ${DEST}; \
+	done
 	make production
 	@echo please restart who-is-on by
 	@echo sudo systemctl restart who-is-on
@@ -27,9 +30,10 @@ install:
 production:
 	sed -i.bak \
 		-e "s|href='/user|href='/w/user|g" \
-		-e "s|action='/users|action='/w/users|" \
-		-e "s|href='/list|href='/w/list|" \
-		${DEST}/who-is-on-app.rkt
+		-e "s|action='/users|action='/w/users|g" \
+		-e "s|href='/i|href='/w/i|g" \
+		-e "s|href='/list|href='/w/list|g" \
+			${DEST}/who-is-on-app.rkt
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update.sh
 	sed -i.bak -e "s|DIR=.*|DIR=/srv/who-is-on|" ${DEST}/update-async.sh
 	cp VERSION ${DEST}/

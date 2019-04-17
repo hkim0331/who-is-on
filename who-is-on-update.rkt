@@ -6,18 +6,18 @@
 ;;;        2019-03-14,
 ;;;        2019-04-09, debug, tanaka and kawano are not checked.
 
-(require db)
+(require db "arp.rkt")
 
 (define *debug* (getenv "WIO_DEBUG"))
-;;(displayln (format "WIO_DEBUG: ~a" (getenv "WIO_DEBUG")))
+
 (define *db* (or (getenv "WIO_DB") "./who-is-on.sqlite3"))
-(define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
+;;(define *arp* (or (getenv "WIO_ARP") "/usr/sbin/arp"))
 (define *ping* (or (getenv "WIO_PING") "/bin/ping"))
-(define *subnet* (or (getenv "WIO_SUBNET") "192.168.0"))
+(define *subnet* (or (getenv "WIO_SUBNET") "10.0.33"))
 
 (when *debug*
   (displayln (format "*db* ~a" *db*))
-  (displayln (format "*arp* ~a" *arp*))
+;;  (displayln (format "*arp* ~a" *arp*))
   (displayln (format "*ping* ~a" *ping*))
   (displayln (format "*subnet* ~a" *subnet*)))
 
@@ -25,23 +25,29 @@
   (when *debug*
     (displayln s)))
 
-
-(define (exec cmdline)
-    (let* ((proc (apply process* (string-split cmdline)))
-           (port (first proc))
-           (ret '()))
-      (let loop ((line (read-line port)))
-        (unless (eof-object? line)
-          (set! ret (cons line ret))
-          (loop (read-line port))))
-      ret))
-
-(define (exec* cmdline)
-  (apply process* (string-split cmdline)))
-
-;; no pipe
-(define (arp)
-  (exec (format "~a -an" *arp*)))
+;; arp.rkt
+;; (define (exec cmdline)
+;;     (let* ((proc (apply process* (string-split cmdline)))
+;;            (port (first proc))
+;;            (ret '()))
+;;       (let loop ((line (read-line port)))
+;;         (unless (eof-object? line)
+;;           (set! ret (cons line ret))
+;;           (loop (read-line port))))
+;;       ret))
+;;
+;; (define (exec* cmdline)
+;;   (apply process* (string-split cmdline)))
+;;
+;; (define (arp)
+;;   (exec (format "~a -an" *arp*)))
+;;
+;; (define (pad mac)
+;;   (define (pad0 s)
+;;     (if (= 1 (string-length s))
+;;         (format "0~a" s)
+;;         s))
+;;   (string-join (map pad0 (string-split mac ":")) ":"))
 
 (define (multi-ping subnet from to)
   (map thread-wait
@@ -51,13 +57,6 @@
           (displayln cmdline))
         (thread (thunk (exec* cmdline))))))
     #t)
-
-(define (pad mac)
-  (define (pad0 s)
-    (if (= 1 (string-length s))
-        (format "0~a" s)
-        s))
-  (string-join (map pad0 (string-split mac ":")) ":"))
 
 ;; executed about once an hour. no need speed up?
 ;; query-exec inside for can be joined as one.

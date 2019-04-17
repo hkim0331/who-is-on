@@ -17,9 +17,9 @@ update.sh 自身の呼び出しをat でスケジュールする。
 
 ### description
 
-* 現在、研究室に来ているユーザ、電源が入っている PC を 
+* 現在、研究室に来ているユーザ、電源が入っている PC を
 <span style='color:red;'>●</span>(赤丸)
-で表示。
+で表示。(図はバージョン 0.13 のものです)
 
     ![現在状況](images/current.png)
 

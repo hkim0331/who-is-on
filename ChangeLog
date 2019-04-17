@@ -1,4 +1,38 @@
+2019-04-17  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+	* 0.15.1
+	* in? タイプチェック。
+	* x-real-ip: bytes->string の前にタイプチェック。
+
+	* 0.15
+	* who-is-on-app.rkt: レイアウトを現代風に。
+	redmine と L99 へのリンクをナビに。
+
+2019-04-12  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.14.2
+	* who-is-on-app.rkt: (x-real-ip) ninx のプロキシーを通すわけで、
+	アプリに届く client-ip は 127.0.0.1 になってしまう。
+	nginx が付与する x-real-ip ヘッダから元の IP を拾う。
+	* しかし、ヘッダを拾ってみると通信が IPv6 していることがわかった。
+	arp6 を考えるのは面倒なので、ネットで探してサーバレベルで IPv6 を
+	ディスエーブルしたところ、なんかおかしい。
+	nginx が IPv6 をリッスンしてるよ！
+	コンフィグを書き換えて nginx が IPv4 のみをリッスンするようにし、
+	解決。細かいメッセージなどの調整はこの後。
+	lxd のレベルで IPv6 止めても良かったかも。
+
+2019-04-11  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+	* 0.14 いるよボタン
+	* who-is-on-app.rkt: (get "/i-m-here") とそれに関連する関数。
+	* in? 同一サブネットか？
+	* ip->mac arp テーブルを引いて ip に対応する mac アドレスを見つける。
+	* wifi? mac は users テーブルに登録があるか？
+	* arp 関連を who-is-on-update.rkt から分離独立させて arp.rkt とする。
+
 2019-04-10  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.13
+	* 並びを年の順に。
 
 	* 0.12
 	* who-is-on-app.rkt: *name-jname* 辞書
@@ -8,16 +42,13 @@
 	* get/post users に jname 分追加
 	* only-people: users から変更。関数の内容を表す名前に。
 
-	* 0.13
-	* 並びを年の順に。
-
 2019-04-09  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.10.1
-	* Makefile: install weekday.rkt
+	* update Makefile: install weekday.rkt
 
 	* 0.10
-	* weekday.rkt: merged.
+	* merge miyakwa's weekday.rkt
 
 2019-04-03  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
