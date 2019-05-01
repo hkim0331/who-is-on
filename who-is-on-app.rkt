@@ -21,7 +21,7 @@
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "0.16")
+(define VERSION "0.16.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -35,7 +35,7 @@
  href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T' crossorigin='anonymous'/>
 <style>
 .red { color: red; }
-.black { color: black; }
+.black ( color: black; }
 </style>
 </head>
 <body>
@@ -306,7 +306,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (display "<table>")
          (display "<tr><th></th>")
          (for ([u users])
-           (display (format "<td> ~a, </td>" (j (wifi->name u)))))
+           (let ((name (wifi->name u)))
+             (display (format "<td><a href='/user/~a'>~a</a>|</td>"
+                              name
+                              (j name)))))
          (display "</tr>")
          (for ([d dates])
            (let ((st
