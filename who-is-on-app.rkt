@@ -259,8 +259,8 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (displayln "</table></div><br>")
          (displayln
           "<p>
-<a href='/i-m-here' class='btn btn-outline-primary btn-sm'>😀</a>
-<a href='/list' class='btn btn-primary btn-sm'>list</a>
+<a href='/i-m-here' class='btn btn-outline-primary btn-sm'>いるよ 😀</a>
+<a href='/list' class='btn btn-outline-primary btn-sm'>list</a>
 <a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
 </p>"))))))
 
