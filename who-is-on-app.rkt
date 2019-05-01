@@ -15,6 +15,7 @@
 ;;;        2019-04-10 japase name, display order
 ;;;        2019-04-11 いるよボタン
 ;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
+;;;        2019-05-01 /list and /list-all
 
 (require db web-server/http
          (planet dmac/spin)
@@ -126,10 +127,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
      sql3
      (format "select wifi from users where ~a order by cat desc, name" q))))
 
-(define (dates-all)
+(define (dates days)
   (query-list
    sql3
-   "select distinct(date) from mac_addrs order by date desc"))
+   (format "select distinct(date) from mac_addrs order by date desc limit ~a" days)))
 
 (define (wifi->name wifi)
   (first (query-list sql3 "select name from users where wifi=$1" wifi)))
@@ -183,14 +184,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 ;;; end points
 ;;;
 
-;; nginx を介さないと。
 ;; 本当は get じゃなくて post だな。
-;;BUG
 (get "/i-m-here"
   (lambda (req)
-;;  (displayln (format "req: ~a" req))
     (let ((client-ip (x-real-ip req)))
-;;    (displayln (format "client-ip: ~a" client-ip))
       (if (in? client-ip)
         (let ((mac (pad (ip->mac client-ip))))
               (displayln (format "mac: ~a" mac))
@@ -299,35 +296,44 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (display "</p>")
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
+;; 2019-05-01
+(define (list days)
+  (let ((users (users-wifi))
+        (dates (weekdays (dates days)))
+        (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
+         (with-output-to-string
+       (lambda ()
+         (display "<table>")
+         (display "<tr><th></th>")
+         (for ([u users])
+           (display (format "<td> ~a, </td>" (j (wifi->name u)))))
+         (display "</tr>")
+         (for ([d dates])
+           (let ((st
+                  (query-list
+                   sql3
+                   "select distinct(mac) from mac_addrs where date=$1" d)))
+             (display (format "<tr><th>~a</th>" (dd-mm d)))
+             (for ([u users])
+               (display (format "<td style='text-align:center;'>~a</td>"
+                                (if (member u st string=?)
+                                    "😀"
+                                    "")))))
+           (display "</tr>"))
+         (display "</table>")))
+         ))
+
+(get "/list-all"
+     (lambda (req)
+       (html
+        (list 400))))
+
 (get "/list"
      (lambda (req)
-       (let ((users (users-wifi))
-             (dates (weekdays (dates-all)))
-             (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
-         (html
-          (with-output-to-string
-            (lambda ()
-              (display "<table>")
-              (display "<tr><th></th>")
-              (for ([u users])
-                (display (format "<td> ~a, </td>" (j (wifi->name u)))))
-              (display "</tr>")
-              (for ([d dates])
-                (let ((st
-                       (query-list
-                        sql3
-                        "select distinct(mac) from mac_addrs where date=$1" d)))
-                  (display (format "<tr><th>~a</th>" (dd-mm d)))
-                  (for ([u users])
-                    (display (format "<td style='text-align:center;'>~a</td>"
-                                     (if (member u st string=?)
-                                         "😀"
-                                         "")))))
-                (display "</tr>"))
-              (display "</table>")))))))
+       (html
+        (list 30))))
 
-
-;;debug
+;;for debug
 (define r #f)
 (get "/info"
      (lambda (req)
