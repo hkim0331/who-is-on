@@ -21,7 +21,7 @@
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "4.1.1")
+(define VERSION "0.16.2")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
