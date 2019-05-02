@@ -21,7 +21,7 @@
          (planet dmac/spin)
          "weekday.rkt" "arp.rkt")
 
-(define VERSION "4.1")
+(define VERSION "4.1.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -73,10 +73,10 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (filter weekday? days))
 
 ;; macro?
-(define (html contents . other)
+(define (html . body)
   (format "~a~a~a"
     header
-    (string-join (cons contents other))
+    (string-join body)
     footer))
 
 ;;want rewrite
