@@ -17,9 +17,11 @@
 ;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
 ;;;        2019-05-01 /list and /list-all
 
-(require db web-server/http
+(require db
+         web-server/http
          (planet dmac/spin)
-         "weekday.rkt" "arp.rkt")
+         "weekday.rkt"
+         "arp.rkt")
 
 (define VERSION "0.16.2")
 
