@@ -23,7 +23,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.16.2")
+(define VERSION "0.17")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -58,6 +58,30 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 </body>
 </html>
 " VERSION))
+
+(define (first-last xs)
+  (list (first xs) (first (reverse xs))))
+
+(define (hh:mm:ss->sec s)
+  (let ((ret (map string->number (string-split s ":"))))
+    (+ (* (first ret) 3600) (* (second ret) 60) (third ret))))
+
+(define (time-diff t2 t1)
+  (- (hh:mm:ss->sec t2)
+     (hh:mm:ss->sec t1)))
+
+(define (datetime-diff xs)
+  (time-diff (second (second xs))
+             (second (first xs))))
+
+(define (total-stay-time u)
+  (let ((stays (map vector->list
+                    (query-rows
+                     sql3
+                     "select date,time from mac_addrs
+inner join users on users.wifi=mac_addrs.mac
+where users.name=$1" u))))
+    (apply + (map datetime-diff (map first-last (group-by first stays))))))
 
 (define (users)
   (query-list sql3 "select name from users order by cat desc,name"))
@@ -192,7 +216,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (let ((client-ip (x-real-ip req)))
       (if (in? client-ip)
         (let ((mac (pad (ip->mac client-ip))))
-              (displayln (format "mac: ~a" mac))
+             (displayln (format "mac: ~a" mac))
           (if (wifi? mac)
             (begin
               (insert mac)
@@ -252,12 +276,16 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
     (html
      (with-output-to-string
        (lambda ()
+         (displayln "<p>( ) は4月から通算の研究室滞留時間。<br>
+こんなんで卒論、PBL できる？</p>")
          (displayln "<div class='container'><table>")
          (for ([u (users)])
            (displayln
-            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a></td><tr>"
+            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a> (~a)</td><tr>"
                     (if (status? u) "😀" "▪️")
-                    u (j u))))
+                    u
+                    (j u)
+                    (quotient (total-stay-time u) 3600))))
          (displayln "</table></div><br>")
          (displayln
           "<p>
@@ -299,54 +327,55 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
                 (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
 
 ;; 2019-05-01
-(define (list days)
+;; bug: must not redefine list!
+(define (list-days days)
   (let ((users (users-wifi))
         (dates (weekdays (dates days)))
         (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
-         (with-output-to-string
-       (lambda ()
-         (display "<table>")
-         (display "<tr><th></th>")
-         (for ([u users])
-           (let ((name (wifi->name u)))
-             (display (format "<td><a href='/user/~a'>~a</a>|</td>"
-                              name
-                              (j name)))))
-         (display "</tr>")
-         (for ([d dates])
-           (let ((st
-                  (query-list
-                   sql3
-                   "select distinct(mac) from mac_addrs where date=$1" d)))
-             (display (format "<tr><th>~a</th>" (dd-mm d)))
-             (for ([u users])
-               (display (format "<td style='text-align:center;'>~a</td>"
-                                (if (member u st string=?)
-                                    "😀"
-                                    "")))))
-           (display "</tr>"))
-         (display "</table>")))
-         ))
+       (with-output-to-string
+        (lambda ()
+          (display "<table>")
+          (display "<tr><th></th>")
+          (for ([u users])
+            (let ((name (wifi->name u)))
+              (display (format "<td><a href='/user/~a'>~a</a>|</td>"
+                               name
+                               (j name)))))
+          (display "</tr>")
+          (for ([d dates])
+            (let ((st
+                   (query-list
+                    sql3
+                    "select distinct(mac) from mac_addrs where date=$1" d)))
+              (display (format "<tr><th>~a</th>" (dd-mm d)))
+              (for ([u users])
+                (display (format "<td style='text-align:center;'>~a</td>"
+                                 (if (member u st string=?)
+                                     "😀"
+                                     "")))))
+            (display "</tr>"))
+          (display "</table>")))))
+
 
 (get "/list-all"
      (lambda (req)
        (html
-        (list 400))))
+        (list-days 400))))
 
 (get "/list"
      (lambda (req)
        (html
-        (list 30))))
+        (list-days 30))))
 
 ;;for debug
 (define r #f)
 (get "/info"
      (lambda (req)
       (set! r req)
-    (html
-      (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
-      (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET"))
-      (format "<p>x-real-ip: ~a</p>" (x-real-ip req)))))
+      (html
+        (format "<p>WIO_DB: ~a</p>" (getenv "WIO_DB"))
+        (format "<p>WIO_SUBNET: ~a</p>" (getenv "WIO_SUBNET"))
+        (format "<p>x-real-ip: ~a</p>" (x-real-ip req)))))
 
 ;;
 ;; start server
@@ -355,4 +384,3 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 (run #:listen-ip "127.0.0.1" #:port 8000)
 ;; for debug
 ;;(run #:listen-ip #f #:port 8000)
-
