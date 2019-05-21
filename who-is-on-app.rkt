@@ -16,6 +16,7 @@
 ;;;        2019-04-11 いるよボタン
 ;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
 ;;;        2019-05-01 /list and /list-all
+;;;        2019-05-20 滞留時間
 
 (require db
          web-server/http
@@ -59,9 +60,6 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
 </html>
 " VERSION))
 
-(define (first-last xs)
-  (list (first xs) (first (reverse xs))))
-
 (define (hh:mm:ss->sec s)
   (let ((ret (map string->number (string-split s ":"))))
     (+ (* (first ret) 3600) (* (second ret) 60) (third ret))))
@@ -70,18 +68,23 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
   (- (hh:mm:ss->sec t2)
      (hh:mm:ss->sec t1)))
 
-(define (datetime-diff xs)
-  (time-diff (second (second xs))
-             (second (first xs))))
-
-(define (total-stay-time u)
-  (let ((stays (map vector->list
-                    (query-rows
-                     sql3
-                     "select date,time from mac_addrs
+(define (stays user)
+  (map
+   vector->list
+   (query-rows
+    sql3
+    "select date,time from mac_addrs
 inner join users on users.wifi=mac_addrs.mac
-where users.name=$1" u))))
-    (apply + (map datetime-diff (map first-last (group-by first stays))))))
+where users.name=$1" user)))
+
+(define (total-stay-second u)
+  (define (first-last xs)
+    (list (first xs) (first (reverse xs))))
+  (define (diff xs)
+    (time-diff (second (second xs))
+               (second (first xs))))
+  (let ((stays (stays u)))
+    (apply + (map diff (map first-last (group-by first stays))))))
 
 (define (users)
   (query-list sql3 "select name from users order by cat desc,name"))
@@ -210,6 +213,10 @@ where users.name=$1" u))))
 ;;; end points
 ;;;
 
+(get "/stays/:user"
+     (lambda (req)
+       (format "~a" (stays (params req 'user)))))
+
 ;; 本当は get じゃなくて post だな。
 (get "/i-m-here"
   (lambda (req)
@@ -276,7 +283,7 @@ where users.name=$1" u))))
     (html
      (with-output-to-string
        (lambda ()
-         (displayln "<p>( ) は4月から通算の研究室滞留時間。<br>
+         (displayln "<p>( ) は 4 月から通算の研究室滞留時間。<br>
 こんなんで卒論、PBL できる？</p>")
          (displayln "<div class='container'><table>")
          (for ([u (users)])
@@ -285,7 +292,7 @@ where users.name=$1" u))))
                     (if (status? u) "😀" "▪️")
                     u
                     (j u)
-                    (quotient (total-stay-time u) 3600))))
+                    (quotient (total-stay-second u) 3600))))
          (displayln "</table></div><br>")
          (displayln
           "<p>
