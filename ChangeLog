@@ -1,3 +1,8 @@
+2019-05-21  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+	
+	* 0.17.1 refactoring
+	get /stays/:user under construction
+
 2019-05-20  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* 0.17 stay-time
