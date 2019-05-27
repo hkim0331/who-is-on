@@ -65,6 +65,7 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+
 * 必要ない MAC は集めない。
 
 * なんだ、この uptime は？Racket のバージョンの違いか？
@@ -112,6 +113,8 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED/UPDATED
+
+* 0.17.3 /user/:name, 土日に色つける。
 
 * 0.13 テーブルに cat コラム。並びを cat 順にする。
 
@@ -205,10 +208,6 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 ### Web アプリのデプロイ
 
 流行りは nginx のリバースプロキシだろう。
-
-
-__M くん、勉強になったか？__
-
 
 ---
 hiroshi.kimura.0331@gmail.com
