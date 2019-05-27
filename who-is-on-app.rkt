@@ -15,6 +15,7 @@
 ;;;        2019-04-10 japase name, display order
 ;;;        2019-04-11 いるよボタン
 ;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
+;;;        2019-05-27 /list にコメント
 
 (require db web-server/http
          (planet dmac/spin)
@@ -307,6 +308,7 @@ hiroshi . kimura . 0331 @ gmail . com, ~a,
          (html
           (with-output-to-string
             (lambda ()
+              (display "<p>課題はやってこない、大学にも来ないじゃ、救いようはない。</p>")
               (display "<table>")
               (display "<tr><th></th>")
               (for ([u users])
