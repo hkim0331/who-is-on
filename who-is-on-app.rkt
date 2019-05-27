@@ -42,8 +42,6 @@
 .red   { color: red; }
 .black { color: black; } 
 .blue  { color: blue; }
-b.0    { color: red; }
-b.6    { color: blue; }
 </style>
 </head>
 <body>
