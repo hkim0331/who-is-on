@@ -38,8 +38,11 @@
  rel='stylesheet'
  href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T' crossorigin='anonymous'/>
 <style>
-.red { color: red; }
-.black ( color: black; }
+.red   { color: red; }
+.black { color: black; } 
+.blue  { color: blue; }
+b.0    { color: red; }
+b.6    { color: blue; }
 </style>
 </head>
 <body>
@@ -314,6 +317,14 @@ where users.name=$1" user)))
         (string-join (map hh:mm ret) " &rarr; ")
         "</p>"))))
 
+;;FIXME: hash or vector?
+(define (color n)
+  (cond
+    ((= n 0) "red")
+    ((= n 6) "blue")
+    (else "black")))
+
+;; color weekends
 (get "/user/:name"
   (lambda (req)
     (define date first)
@@ -325,14 +336,17 @@ where users.name=$1" user)))
           (lambda ()
             (let loop ((ret (map vector->list (query-rows sql3 "select date,time from  mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 order by date desc, time" name))))
               (unless (null? ret)
-                (display (format "<p><b>~a</b> " (dd-mm (first-date ret))))
+                (let ((the-date (first-date ret)))
+                (display (format "<p><b class='~a'>~a</b> " 
+                  (color (day-of-week the-date))
+                  (dd-mm the-date)))
                 (display
                   (string-join
                     (map (lambda (x) (hh:mm (second x)))
-                      (filter (lambda (s) (string=? (date s) (first-date ret))) ret))
+                      (filter (lambda (s) (string=? (date s) the-date)) ret))
                     " &rarr; "))
                 (display "</p>")
-                (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
+                (loop (filter (lambda (s) (string<? (date s) the-date)) ret)))))))))))
 
 ;; 2019-05-01
 ;; bug: must not redefine list!
