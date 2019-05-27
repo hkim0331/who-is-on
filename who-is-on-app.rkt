@@ -18,6 +18,7 @@
 ;;;        2019-05-01 /list and /list-all
 ;;;        2019-05-20 滞留時間
 ;;;        2019-05-27 /list にコメント
+;;;        2019-05027 土日をカラー表示
 
 (require db
          web-server/http
@@ -25,7 +26,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.17.2")
+(define VERSION "0.17.3")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
