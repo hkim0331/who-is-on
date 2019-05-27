@@ -18,6 +18,7 @@
 	* who-is-on-app.rkt: (x-real-ip) ninx のプロキシーを通すわけで、
 	アプリに届く client-ip は 127.0.0.1 になってしまう。
 	nginx が付与する x-real-ip ヘッダから元の IP を拾う。
+
 	* しかし、ヘッダを拾ってみると通信が IPv6 していることがわかった。
 	arp6 を考えるのは面倒なので、ネットで探してサーバレベルで IPv6 を
 	ディスエーブルしたところ、なんかおかしい。
@@ -27,6 +28,7 @@
 	lxd のレベルで IPv6 止めても良かったかも。
 
 2019-04-11  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
 	* 0.14 いるよボタン
 	* who-is-on-app.rkt: (get "/i-m-here") とそれに関連する関数。
 	* in? 同一サブネットか？
