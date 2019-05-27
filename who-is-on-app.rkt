@@ -17,6 +17,7 @@
 ;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
 ;;;        2019-05-01 /list and /list-all
 ;;;        2019-05-20 滞留時間
+;;;        2019-05-27 /list にコメント
 
 (require db
          web-server/http
@@ -24,7 +25,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.17.1")
+(define VERSION "0.17.2")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -341,6 +342,7 @@ where users.name=$1" user)))
         (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
        (with-output-to-string
         (lambda ()
+          (display "<p>課題はやってこない大学にも来ないじゃ救いようない。</p>")
           (display "<table>")
           (display "<tr><th></th>")
           (for ([u users])
@@ -374,7 +376,7 @@ where users.name=$1" user)))
        (html
         (list-days 30))))
 
-;;for debug
+;; for debug only
 (define r #f)
 (get "/info"
      (lambda (req)
