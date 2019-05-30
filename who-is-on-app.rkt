@@ -51,6 +51,7 @@
 <a href='/users' class='btn btn-outline-primary btn-sm'>back</a>
 <a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
 <a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
+<a href='http://rc.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
 </p>
 ")
 
