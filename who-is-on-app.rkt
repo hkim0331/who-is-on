@@ -18,7 +18,8 @@
 ;;;        2019-05-01 /list and /list-all
 ;;;        2019-05-20 滞留時間
 ;;;        2019-05-27 /list にコメント
-;;;        2019-05027 土日をカラー表示
+;;;        2019-05-27 土日をカラー表示
+;;;        2019-05-30 ryuto-circuit へのリンク
 
 (require db
          web-server/http
@@ -26,7 +27,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.17.3")
+(define VERSION "0.17.4")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -40,7 +41,7 @@
  href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T' crossorigin='anonymous'/>
 <style>
 .red   { color: red; }
-.black { color: black; } 
+.black { color: black; }
 .blue  { color: blue; }
 </style>
 </head>
