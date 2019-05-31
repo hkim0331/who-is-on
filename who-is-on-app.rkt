@@ -225,7 +225,7 @@ where users.name=$1" user)))
 (get "/amend"
   (lambda (req)
 (html
-  "<h3>amend</h3>
+  "<h3>amend(under construction)</h3>
    <form method='post' action='/amend'>
     <p>admin <input name='admin'> password <input type='pass'></p>
     <p>who?<input name='name'></p>
