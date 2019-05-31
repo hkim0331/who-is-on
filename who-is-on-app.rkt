@@ -28,7 +28,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.17.5.2")
+(define VERSION "0.18")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -314,6 +314,13 @@ where users.name=$1" user)))
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
 
+;;2019-05-31, 0.18
+(define (start-time uname day)
+  (query-maybe-value
+   sql3
+   "select time from mac_addrs where mac=$1 and date=$2 order by time limit 1"
+   (wifi uname) day))
+
 (get "/users"
   (lambda (req)
     (html
@@ -324,11 +331,15 @@ where users.name=$1" user)))
          (displayln "<div class='container'><table>")
          (for ([u (users)])
            (displayln
-            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a> (~a)</td><tr>"
+            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a> (~a~a)</td><tr>"
                     (if (status? u) "😀" "▪️")
                     u
                     (j u)
-                    (quotient (total-stay-second u) 3600))))
+                    (quotient (total-stay-second u) 3600)
+                    (let ((st (start-time u (first (now)))))
+                      (if st
+                          (format ", ~a~~" st)
+                          "")))))
          (displayln "</table></div><br>")
          (displayln
           "<p>
@@ -370,7 +381,7 @@ where users.name=$1" user)))
             (let loop ((ret (map vector->list (query-rows sql3 "select date,time from  mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 order by date desc, time" name))))
               (unless (null? ret)
                 (let ((the-date (first-date ret)))
-                (display (format "<p><b class='~a'>~a</b> " 
+                (display (format "<p><b class='~a'>~a</b> "
                   (color (day-of-week the-date))
                   (dd-mm the-date)))
                 (display
