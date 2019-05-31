@@ -21,6 +21,7 @@
 ;;;        2019-05-27 土日をカラー表示
 ;;;        2019-05-29 ryuto-circuit へのリンク
 ;;;        2019-05-30 amend, under construction
+;;;        2019-05-31 start time
 
 (require db
          web-server/http
@@ -327,7 +328,7 @@ where users.name=$1" user)))
      (with-output-to-string
        (lambda ()
          (displayln "<p>( ) は 4 月から通算の研究室滞留時間。<br>
-こんなんで卒論、PBL できる？</p>")
+卒論、PBL、だいじょうぶ？</p>")
          (displayln "<div class='container'><table>")
          (for ([u (users)])
            (displayln
@@ -400,7 +401,7 @@ where users.name=$1" user)))
         (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
        (with-output-to-string
         (lambda ()
-          (display "<p>課題はやってこない大学にも来ないじゃ救いようない。</p>")
+          (display "<p>課題やってこない大学に来ないじゃ救いようない。</p>")
           (display "<table>")
           (display "<tr><th></th>")
           (for ([u users])
