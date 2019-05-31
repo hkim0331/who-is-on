@@ -65,6 +65,11 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* auth を独立した関数・モジュールに。
+
+* amend。出席取り損なった学生に。
+
+* let で sql 発行するのは宮川に良くない。リファクタしよう。
 
 * 必要ない MAC は集めない。
 

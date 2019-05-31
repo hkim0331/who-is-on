@@ -19,7 +19,8 @@
 ;;;        2019-05-20 滞留時間
 ;;;        2019-05-27 /list にコメント
 ;;;        2019-05-27 土日をカラー表示
-;;;        2019-05-30 ryuto-circuit へのリンク
+;;;        2019-05-29 ryuto-circuit へのリンク
+;;;        2019-05-30 amend, under construction
 
 (require db
          web-server/http
@@ -27,7 +28,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.17.4")
+(define VERSION "0.17.5")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -130,6 +131,7 @@ where users.name=$1" user)))
                ;; max 2 hours
                (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
 
+;; CHECK: query-maybe-value?
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
 
@@ -204,7 +206,6 @@ where users.name=$1" user)))
      (return #f))))
 
 ;;0.14.2
-;;BUG
 (define (x-real-ip req)
   (let ((headers
          (filter
@@ -218,11 +219,41 @@ where users.name=$1" user)))
 ;;; end points
 ;;;
 
+;; 2019-05-30
+;; 出席記録しそこなった学生のために
+;; need auth
+(get "/amend"
+  (lambda (req)
+(html
+  "<h3>amend(under construction)</h3>
+   <form method='post' action='/amend'>
+    <p>admin <input name='admin'> password <input type='pass'></p>
+    <p>who?<input name='name'></p>
+    <p>when<input name='date' placeholder='yyyy-mm-dd'></p>
+    <p><input type='submit' value='amend'></p>
+</form>")))
+
+(post "/amend"
+  (lambda (req)
+    (let ((admin (params req 'admin))
+          (pass (params req 'pass))
+          (wifi (wifi (params req 'name))))
+      (if (string=? (params req 'pass)
+                    (query-value sql3 "select pass from pass"))
+        (begin
+          (query-exec
+            sql3
+            "insert into mac_addrs (mac, date, time) values ($1, $2, $3)"
+            wifi (params req 'date) "12:00:00")
+          (html "<p>OK. <a href='/'>back</a></p>"))
+        (html "<p>bad password. <a href='/amend'>amend</a> or <a href='/'>back</a></p>")))))
+
 (get "/stays/:user"
      (lambda (req)
        (format "~a" (stays (params req 'user)))))
 
 ;; 本当は get じゃなくて post だな。
+;; href='/i-m-here' で飛ばしたいがために get
 (get "/i-m-here"
   (lambda (req)
     (let ((client-ip (x-real-ip req)))
@@ -303,7 +334,8 @@ where users.name=$1" user)))
           "<p>
 <a href='/i-m-here' class='btn btn-outline-primary btn-sm'>いるよ 😀</a>
 <a href='/list' class='btn btn-outline-primary btn-sm'>list</a>
-<a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
+<a href='/amend' class='btn btn-primary btn-sm'>amend</a>
+<a href='/users/new' class='btn btn-primary btn-sm'>add</a>
 </p>"))))))
 
 (get "/user/:name/:date"
