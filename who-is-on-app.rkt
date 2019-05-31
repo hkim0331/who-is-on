@@ -28,7 +28,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.17.4")
+(define VERSION "0.17.5")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
