@@ -1,3 +1,8 @@
+2019-05-31  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
+
+	* 0.17.5.2
+	* who-is-on-app.rkt: BUGFIX: password 属性を pass で書いていた。
+
 2019-05-30  Hiroshi Kimura  <hiroshi.kimura.0331@gmail.com>
 
 	* who-is-on-app.rkt: ryuto-circuit へのリンク
