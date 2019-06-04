@@ -65,6 +65,10 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* 0.19 auth を独立した関数・モジュールに。
+
+* 0.20 let で sql 発行するのは宮川に良くない。リファクタしよう。
+
 * 必要ない MAC は集めない。
 
 * なんだ、この uptime は？Racket のバージョンの違いか？
@@ -112,6 +116,12 @@ $
     * プロキシがつながらなくなる。sites-enable からのリンクでやった場合。
 
 ### FIXED/UPDATED
+
+* 0.18 /users に本日スタート時間を表示。
+
+* 0.17.5 amend. 出席取り損なった学生に。
+
+* 0.17.3 /user/:name, 土日に色つける。
 
 * 0.13 テーブルに cat コラム。並びを cat 順にする。
 
@@ -205,10 +215,6 @@ Racket の web フレームワーク dmac/spin で web アプリを作成する�
 ### Web アプリのデプロイ
 
 流行りは nginx のリバースプロキシだろう。
-
-
-__M くん、勉強になったか？__
-
 
 ---
 hiroshi.kimura.0331@gmail.com

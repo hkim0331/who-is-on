@@ -17,6 +17,11 @@
 ;;;        2019-04-17 レイアウト変更、redmine、l99 へのリンク、絵文字
 ;;;        2019-05-01 /list and /list-all
 ;;;        2019-05-20 滞留時間
+;;;        2019-05-27 /list にコメント
+;;;        2019-05-27 土日をカラー表示
+;;;        2019-05-29 ryuto-circuit へのリンク
+;;;        2019-05-30 amend, under construction
+;;;        2019-05-31 start time
 
 (require db
          web-server/http
@@ -24,7 +29,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.17.1")
+(define VERSION "0.18")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -37,8 +42,9 @@
  rel='stylesheet'
  href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T' crossorigin='anonymous'/>
 <style>
-.red { color: red; }
-.black ( color: black; }
+.red   { color: red; }
+.black { color: black; }
+.blue  { color: blue; }
 </style>
 </head>
 <body>
@@ -48,6 +54,7 @@
 <a href='/users' class='btn btn-outline-primary btn-sm'>back</a>
 <a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
 <a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
+<a href='http://rc.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
 </p>
 ")
 
@@ -125,6 +132,7 @@ where users.name=$1" user)))
                ;; max 2 hours
                (<= (- (hh (second now)) (hh (vector-ref (first ret) 1))) 1))))))
 
+;; CHECK: query-maybe-value?
 (define (wifi name)
   (query-value sql3 "select wifi from users where name=$1" name))
 
@@ -199,7 +207,6 @@ where users.name=$1" user)))
      (return #f))))
 
 ;;0.14.2
-;;BUG
 (define (x-real-ip req)
   (let ((headers
          (filter
@@ -213,11 +220,41 @@ where users.name=$1" user)))
 ;;; end points
 ;;;
 
+;; 2019-05-30
+;; 出席記録しそこなった学生のために
+;; need auth
+(get "/amend"
+  (lambda (req)
+(html
+  "<h3>amend(under construction)</h3>
+   <form method='post' action='/amend'>
+    <p>admin <input name='admin'> password <input type='password' name='pass'></p>
+    <p>who?<input name='name'></p>
+    <p>when<input name='date' placeholder='yyyy-mm-dd'></p>
+    <p><input type='submit' value='amend'></p>
+</form>")))
+
+(post "/amend"
+  (lambda (req)
+    (let ((admin (params req 'admin))
+          (pass (params req 'pass))
+          (wifi (wifi (params req 'name))))
+      (if (string=? (params req 'pass)
+                    (query-value sql3 "select pass from pass"))
+        (begin
+          (query-exec
+            sql3
+            "insert into mac_addrs (mac, date, time) values ($1, $2, $3)"
+            wifi (params req 'date) "12:00:00")
+          (html "<p>OK. <a href='/'>back</a></p>"))
+        (html "<p>bad password. <a href='/amend'>amend</a> or <a href='/'>back</a></p>")))))
+
 (get "/stays/:user"
      (lambda (req)
        (format "~a" (stays (params req 'user)))))
 
 ;; 本当は get じゃなくて post だな。
+;; href='/i-m-here' で飛ばしたいがために get
 (get "/i-m-here"
   (lambda (req)
     (let ((client-ip (x-real-ip req)))
@@ -278,27 +315,39 @@ where users.name=$1" user)))
           (displayln "<p><input type='submit' class='btn btn-primary' value='add'></p>")
           (displayln "</form>"))))))
 
+;;2019-05-31, 0.18
+(define (start-time uname day)
+  (query-maybe-value
+   sql3
+   "select time from mac_addrs where mac=$1 and date=$2 order by time limit 1"
+   (wifi uname) day))
+
 (get "/users"
   (lambda (req)
     (html
      (with-output-to-string
        (lambda ()
          (displayln "<p>( ) は 4 月から通算の研究室滞留時間。<br>
-こんなんで卒論、PBL できる？</p>")
+卒論、PBL、だいじょうぶ？</p>")
          (displayln "<div class='container'><table>")
          (for ([u (users)])
            (displayln
-            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a> (~a)</td><tr>"
+            (format "<tr><td>~a</a></td><td><a href='/user/~a'>~a</a> (~a~a)</td><tr>"
                     (if (status? u) "😀" "▪️")
                     u
                     (j u)
-                    (quotient (total-stay-second u) 3600))))
+                    (quotient (total-stay-second u) 3600)
+                    (let ((st (start-time u (first (now)))))
+                      (if st
+                          (format ", ~a~~" st)
+                          "")))))
          (displayln "</table></div><br>")
          (displayln
           "<p>
 <a href='/i-m-here' class='btn btn-outline-primary btn-sm'>いるよ 😀</a>
 <a href='/list' class='btn btn-outline-primary btn-sm'>list</a>
-<a href='/users/new' class='btn btn-primary btn-sm'>add user</a>
+<a href='/amend' class='btn btn-primary btn-sm'>amend</a>
+<a href='/users/new' class='btn btn-primary btn-sm'>add</a>
 </p>"))))))
 
 (get "/user/:name/:date"
@@ -313,6 +362,14 @@ where users.name=$1" user)))
         (string-join (map hh:mm ret) " &rarr; ")
         "</p>"))))
 
+;;FIXME: hash or vector?
+(define (color n)
+  (cond
+    ((= n 0) "red")
+    ((= n 6) "blue")
+    (else "black")))
+
+;; color weekends
 (get "/user/:name"
   (lambda (req)
     (define date first)
@@ -324,14 +381,17 @@ where users.name=$1" user)))
           (lambda ()
             (let loop ((ret (map vector->list (query-rows sql3 "select date,time from  mac_addrs inner join users on mac_addrs.mac=users.wifi where users.name=$1 order by date desc, time" name))))
               (unless (null? ret)
-                (display (format "<p><b>~a</b> " (dd-mm (first-date ret))))
+                (let ((the-date (first-date ret)))
+                (display (format "<p><b class='~a'>~a</b> "
+                  (color (day-of-week the-date))
+                  (dd-mm the-date)))
                 (display
                   (string-join
                     (map (lambda (x) (hh:mm (second x)))
-                      (filter (lambda (s) (string=? (date s) (first-date ret))) ret))
+                      (filter (lambda (s) (string=? (date s) the-date)) ret))
                     " &rarr; "))
                 (display "</p>")
-                (loop (filter (lambda (s) (string<? (date s) (first-date ret))) ret))))))))))
+                (loop (filter (lambda (s) (string<? (date s) the-date)) ret)))))))))))
 
 ;; 2019-05-01
 ;; bug: must not redefine list!
@@ -341,6 +401,7 @@ where users.name=$1" user)))
         (status (query-rows sql3 "select date,mac from mac_addrs group by date")))
        (with-output-to-string
         (lambda ()
+          (display "<p>課題やってこない大学に来ないじゃ救いようない。</p>")
           (display "<table>")
           (display "<tr><th></th>")
           (for ([u users])
@@ -374,7 +435,7 @@ where users.name=$1" user)))
        (html
         (list-days 30))))
 
-;;for debug
+;; for debug only
 (define r #f)
 (get "/info"
      (lambda (req)
