@@ -22,6 +22,7 @@
 ;;;        2019-05-29 ryuto-circuit へのリンク
 ;;;        2019-05-30 amend, under construction
 ;;;        2019-05-31 start time
+;;;        2019-06-04 as -- link to miyakawa assign.
 
 (require db
          web-server/http
@@ -29,7 +30,7 @@
          "weekday.rkt"
          "arp.rkt")
 
-(define VERSION "0.18")
+(define VERSION "0.18.1")
 
 (define sql3 (sqlite3-connect #:database (or (getenv "WIO_DB") "who-is-on.sqlite3")))
 
@@ -55,8 +56,8 @@
 <a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
 <a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
 <a href='http://rc.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
-</p>
-")
+<a href='http://c104.melt.kyutech.ac.jp:8004' class='btn btn-outline-primary btn-sm'>as</a>
+</p>")
 
 (define footer
   (format "<hr>
