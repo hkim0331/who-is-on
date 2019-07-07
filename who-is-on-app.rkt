@@ -229,10 +229,9 @@ where users.name=$1" user)))
 (html
   "<h3>amend(under construction)</h3>
    <form method='post' action='/amend'>
-    <p>admin <input name='admin'> password <input type='password' name='pass'></p>
-    <p>who?<input name='name'></p>
-    <p>when<input name='date' placeholder='yyyy-mm-dd'></p>
-    <p><input type='submit' value='amend'></p>
+    <p>whose?<input name='name'></p>
+    <p>when?<input name='date' placeholder='yyyy-mm-dd'></p>
+    <p><input type='submit' value='he was on'></p>
 </form>")))
 
 (post "/amend"
