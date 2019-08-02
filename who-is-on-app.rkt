@@ -22,6 +22,7 @@
 ;;;        2019-05-29 ryuto-circuit へのリンク
 ;;;        2019-05-30 amend, under construction
 ;;;        2019-05-31 start time
+;;;        2019-06-04 as -- link to miyakawa assign.
 ;;;        2019-08-02 1day100
 
 (require db
@@ -58,8 +59,7 @@
 <a href='http://c104.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
 <a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
 <a href='http://c104.melt.kyutech.ac.jp:8004' class='btn btn-outline-primary btn-sm'>as</a>
-</p>
-")
+</p>")
 
 (define footer
   (format "<hr>
@@ -231,10 +231,9 @@ where users.name=$1" user)))
 (html
   "<h3>amend(under construction)</h3>
    <form method='post' action='/amend'>
-    <p>admin <input name='admin'> password <input type='password' name='pass'></p>
-    <p>who?<input name='name'></p>
-    <p>when<input name='date' placeholder='yyyy-mm-dd'></p>
-    <p><input type='submit' value='amend'></p>
+    <p>whose?<input name='name'></p>
+    <p>when?<input name='date' placeholder='yyyy-mm-dd'></p>
+    <p><input type='submit' value='he was on'></p>
 </form>")))
 
 (post "/amend"
