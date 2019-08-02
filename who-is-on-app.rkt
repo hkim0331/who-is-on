@@ -22,6 +22,7 @@
 ;;;        2019-05-29 ryuto-circuit へのリンク
 ;;;        2019-05-30 amend, under construction
 ;;;        2019-05-31 start time
+;;;        2019-08-02 1day100
 
 (require db
          web-server/http
@@ -53,8 +54,10 @@
 <p>
 <a href='/users' class='btn btn-outline-primary btn-sm'>back</a>
 <a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
+<a href='http://c104.melt.kyutech.ac.jp:8005' class='btn btn-outline-primary btn-sm'>1day100</a>
+<a href='http://c104.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
 <a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
-<a href='http://rc.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
+<a href='http://c104.melt.kyutech.ac.jp:8004' class='btn btn-outline-primary btn-sm'>as</a>
 </p>
 ")
 
