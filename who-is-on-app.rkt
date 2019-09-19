@@ -347,7 +347,7 @@ where users.name=$1" user)))
          (displayln
           "<p>
 <a href='/i-m-here' class='btn btn-outline-primary btn-sm'>いるよ 😀</a>
-<a href='/list' class='btn btn-outline-primary btn-sm'>list</a>
+<a href='/list' class='btn btn-outline-primary btn-sm'>last month</a>
 <a href='/amend' class='btn btn-primary btn-sm'>amend</a>
 <a href='/users/new' class='btn btn-primary btn-sm'>add</a>
 </p>"))))))
