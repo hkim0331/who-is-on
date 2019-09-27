@@ -65,6 +65,12 @@ who-is-on.service はその systemd ファイル。
 
 ### FIXME/TODO
 
+* [0.19.1] remove a link to empty site 'as'
+
+* s|http://c104.melt.kyutech.ac.jp:3000|https://c104.melt.kyutech.ac.jp:3000|
+
+* 野良アップ 'list'=>'last 30d'
+
 * [0.19] 1day100 へのリンク。2019-08-02
 
 * auth を独立した関数・モジュールに。
