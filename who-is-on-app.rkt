@@ -56,9 +56,8 @@
 <a href='/users' class='btn btn-outline-primary btn-sm'>back</a>
 <a href='https://rm4.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>redmine</a>
 <a href='http://c104.melt.kyutech.ac.jp:8005' class='btn btn-outline-primary btn-sm'>1day100</a>
-<a href='http://c104.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
+<a href='https://c104.melt.kyutech.ac.jp:3000' class='btn btn-outline-primary btn-sm'>rc</a>
 <a href='https://l99.melt.kyutech.ac.jp' class='btn btn-outline-primary btn-sm'>L99</a>
-<a href='http://c104.melt.kyutech.ac.jp:8004' class='btn btn-outline-primary btn-sm'>as</a>
 </p>")
 
 (define footer
@@ -347,7 +346,7 @@ where users.name=$1" user)))
          (displayln
           "<p>
 <a href='/i-m-here' class='btn btn-outline-primary btn-sm'>いるよ 😀</a>
-<a href='/list' class='btn btn-outline-primary btn-sm'>last month</a>
+<a href='/list' class='btn btn-outline-primary btn-sm'>last 30d</a>
 <a href='/amend' class='btn btn-primary btn-sm'>amend</a>
 <a href='/users/new' class='btn btn-primary btn-sm'>add</a>
 </p>"))))))
